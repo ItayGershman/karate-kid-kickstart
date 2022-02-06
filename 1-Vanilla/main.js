@@ -1,5 +1,4 @@
 (function () {
-  // const list = []
   const list = [
     {
       text: "Doing the Dishes",
@@ -157,9 +156,11 @@
     const li = document.getElementById(item.id);
     const text = li.firstChild.children[1];
     if (item.status === "finished") {
+      text.classList.remove("finished-todo")
       text.classList.add("unfinished-todo");
       item.status = "unfinished";
     } else {
+      text.classList.remove("unfinished-todo")
       text.classList.add("finished-todo");
       item.status = "finished";
     }
@@ -180,13 +181,24 @@
     const li = document.createElement("li");
     li.id = item.id;
 
+
+    const switchElem = document.createElement("label");
+    switchElem.classList.add("switch");
+    
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
     checkbox.onclick = () => toggleTodo(item);
 
+    const slider = document.createElement("span")
+    slider.classList.add("slider");
+    slider.classList.add("round");
+
+    switchElem.appendChild(checkbox);
+    switchElem.appendChild(slider);
+
     const listItemText = document.createElement("div");
     listItemText.classList.add("list-item-text");
-    listItemText.appendChild(checkbox);
+    listItemText.appendChild(switchElem);
 
     const text = document.createElement("span");
     text.innerText = item.text;
