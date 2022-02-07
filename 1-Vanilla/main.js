@@ -79,24 +79,24 @@
 
   const editModeItems = [];
 
-  const ul = document.getElementById("todoList");
+  const todoList = document.getElementById("todoList");
+  const inputText = document.getElementById("addTodo");
 
   const loadToDoList = (list) => {
-    ul.innerHTML = "";
+    todoList.innerHTML = "";
     list.forEach((item) => {
-      ul.appendChild(createItem(list, item));
+      todoList.appendChild(createItem(list, item));
     });
   };
 
   const addTodo = () => {
-    const inputText = document.getElementById("addTodo");
     const newTodo = {
       text: inputText.value,
       status: "unfinished",
       id: list.length + 1,
     };
     list.push(newTodo);
-    ul.insertBefore(createItem(list, newTodo), ul.firstChild);
+    todoList.insertBefore(createItem(list, newTodo), todoList.firstChild);
     inputText.value = ""; //clear input text
   };
 
@@ -105,12 +105,12 @@
     list = list.filter(function (ele) {
       return ele.id != item.id;
     });
-    const li = document.getElementById(item.id);
-    li.remove();
+    const todoListItem = document.getElementById(item.id);
+    todoListItem.remove();
   };
 
   function removeElement(array, elem) {
-    var index = array.indexOf(elem);
+    const index = array.indexOf(elem);
     if (index > -1) {
       array.splice(index, 1);
     }
@@ -121,47 +121,46 @@
   };
 
   const editTodo = (item) => {
-    const li = document.getElementById(item.id);
+    const todoListItem = document.getElementById(item.id);
     const isFound = editModeItems.some((element) => {
       if (element.id === item.id) {
         return true;
       }
     });
 
-    const elemToChange = li.firstChild.children[1];
+    const elemToChange = todoListItem.firstChild.children[1];
     if (isFound) {
       removeElement(editModeItems, item);
-      const todo = document.createElement("span");
+      const todoItem = document.createElement("span");
       const editedText = document.getElementById(`${item.id}-editTodo`);
-      todo.innerText = editedText.value;
-      todo.classList.add("todo-text");
+      todoItem.innerText = editedText.value;
+      todoItem.classList.add("todo-text");
       if (item.status === "finished") {
-        todo.classList.add("finished-todo");
-        li.firstChild.checked = true;
+        todoItem.classList.add("finished-todo");
+        todoListItem.firstChild.checked = true;
       }
-      renderComponent(li, todo, elemToChange);
+      renderComponent(todoListItem, todoItem, elemToChange);
     } else {
       editModeItems.push(item);
       const inputText = document.createElement("input");
       inputText.type = "text";
       inputText.value = item.text;
-      inputText.classList.add("todo-text");
-      inputText.classList.add("edit-todo");
+      inputText.classList.add("todo-text", "edit-todo");
       inputText.id = `${item.id}-editTodo`;
-      renderComponent(li, inputText, elemToChange);
+      renderComponent(todoListItem, inputText, elemToChange);
     }
   };
 
   const toggleTodo = (item) => {
-    const li = document.getElementById(item.id);
-    const text = li.firstChild.children[1];
+    const todoListItem = document.getElementById(item.id);
+    const todoDescription = todoListItem.firstChild.children[1];
     if (item.status === "finished") {
-      text.classList.remove("finished-todo")
-      text.classList.add("unfinished-todo");
+      todoDescription.classList.remove("finished-todo");
+      todoDescription.classList.add("unfinished-todo");
       item.status = "unfinished";
     } else {
-      text.classList.remove("unfinished-todo")
-      text.classList.add("finished-todo");
+      todoDescription.classList.remove("unfinished-todo");
+      todoDescription.classList.add("finished-todo");
       item.status = "finished";
     }
   };
@@ -172,45 +171,51 @@
     iTag.className = icon;
     button.append(iTag);
     button.classList.add(className);
-    button.onclick = cb;
+    button.addEventListener("click", cb);
     button.style.cursor = "pointer";
     return button;
   };
 
-  const createItem = (list, item) => {
-    const li = document.createElement("li");
-    li.id = item.id;
-
-
+  const createSwitchElem = (cb) => {
     const switchElem = document.createElement("label");
     switchElem.classList.add("switch");
-    
+
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
-    checkbox.onclick = () => toggleTodo(item);
+    checkbox.onclick = cb;
 
-    const slider = document.createElement("span")
+    const slider = document.createElement("span");
     slider.classList.add("slider");
     slider.classList.add("round");
 
     switchElem.appendChild(checkbox);
     switchElem.appendChild(slider);
+    return switchElem;
+  };
 
-    const listItemText = document.createElement("div");
-    listItemText.classList.add("list-item-text");
-    listItemText.appendChild(switchElem);
-
-    const text = document.createElement("span");
-    text.innerText = item.text;
-    text.classList.add("todo-text");
+  const createTextItem = (item, switchElem) => {
+    const todoDescription = document.createElement("span");
+    todoDescription.innerText = item.text;
+    todoDescription.classList.add("todo-text");
     if (item.status === "finished") {
-      text.classList.add("finished-todo");
-      checkbox.checked = true;
+      todoDescription.classList.add("finished-todo");
+      switchElem.firstChild.checked = true;
     }
-    listItemText.appendChild(text);
+    return todoDescription;
+  };
 
-    const spanButton = document.createElement("span");
-    spanButton.classList.add("list-item-actions");
+  const createItem = (list, item) => {
+    const todoListItem = document.createElement("li");
+    todoListItem.id = item.id;
+
+    const listItemContainer = document.createElement("div");
+    listItemContainer.classList.add("list-item-text");
+    const switchElem = createSwitchElem(() => toggleTodo(item));
+    listItemContainer.appendChild(switchElem);
+    listItemContainer.appendChild(createTextItem(item, switchElem));
+
+    const itemActions = document.createElement("span");
+    itemActions.classList.add("list-item-actions");
 
     const removeButton = createButton(
       () => removeTodo(list, item),
@@ -222,20 +227,20 @@
       "fa fa-pencil",
       "edit"
     );
-    spanButton.appendChild(removeButton);
-    spanButton.appendChild(editButton);
+    itemActions.appendChild(removeButton);
+    itemActions.appendChild(editButton);
 
-    li.appendChild(listItemText);
-    li.appendChild(spanButton);
-    return li;
+    todoListItem.appendChild(listItemContainer);
+    todoListItem.appendChild(itemActions);
+    return todoListItem;
   };
 
   const editListenerHandler = (e) => {
-    const text = e.target;
-    const id = Number(text.id.split("-")[0]);
+    const editInputElem = e.target;
+    const id = Number(editInputElem.id.split("-")[0]);
     let updatedItem = list.find((ele) => {
       if (ele.id === id) {
-        ele.text = text.value;
+        ele.text = editInputElem.value;
         return true;
       }
     });
@@ -243,15 +248,11 @@
   };
 
   document.querySelector("#addTodo").addEventListener("keypress", (e) => {
-    if (e.key === "Enter") {
-      addTodo();
-    }
+    if (e.key === "Enter") addTodo();
   });
 
   document.querySelector("#todoList").addEventListener("keypress", (e) => {
-    if (e.key === "Enter") {
-      editListenerHandler(e);
-    }
+    if (e.key === "Enter") editListenerHandler(e);
   });
   loadToDoList(list);
 })();
