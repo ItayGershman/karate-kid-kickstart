@@ -176,5 +176,5 @@ import { LocalStorage } from "./utils/localstorage";
   document.querySelector("#todoList").addEventListener("keypress", (e) => {
     if (e.key === "Enter") editListenerHandler(e);
   });
-  loadToDoList(LS.getList());
+  loadToDoList(LS.getList().reverse());
 })();
