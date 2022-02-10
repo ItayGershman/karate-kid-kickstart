@@ -1,4 +1,4 @@
-const { v4: uuidv4 } = require("uuid");
+import { v4 as uuidv4 } from "uuid";
 import { LocalStorage } from "./utils/localstorage";
 
 (function () {
@@ -26,7 +26,7 @@ import { LocalStorage } from "./utils/localstorage";
     inputText.value = "";
   };
 
-  const removeTodo = (list, item) => {
+  const removeTodo = (item) => {
     document.getElementById(item.id).remove();
     LS.removeTodo(item.id);
   };
@@ -36,8 +36,8 @@ import { LocalStorage } from "./utils/localstorage";
     if (index > -1) array.splice(index, 1);
   }
 
-  const renderComponent = (elem, curr, modifiedElem) => {
-    elem.firstChild.replaceChild(curr, modifiedElem);
+  const swapDOMComponents = (elem, curr, modifiedElem) => {
+    elem.querySelector(".list-item-text").replaceChild(curr, modifiedElem);
   };
 
   const createTodoItem = (item, todoListItem) => {
@@ -63,11 +63,11 @@ import { LocalStorage } from "./utils/localstorage";
   const editTodo = (item) => {
     const todoListItem = document.getElementById(item.id);
     const isFound = editModeItems.some((element) => element.id === item.id);
-    const elemToChange = todoListItem.firstChild.children[1];
+    const elemToChange = todoListItem.querySelector(`.todo-text`);
     if (isFound) {
       removeElement(editModeItems, item);
       const todoItem = createTodoItem(item, todoListItem);
-      renderComponent(todoListItem, todoItem, elemToChange);
+      swapDOMComponents(todoListItem, todoItem, elemToChange);
       LS.editTodo(
         { ...item, text: todoItem.innerText, isFinished: item.isFinished },
         item.id
@@ -75,7 +75,7 @@ import { LocalStorage } from "./utils/localstorage";
     } else {
       editModeItems.push(item);
       const inputText = createEditTodoElem(elemToChange, item);
-      renderComponent(todoListItem, inputText, elemToChange);
+      swapDOMComponents(todoListItem, inputText, elemToChange);
     }
   };
 
@@ -150,7 +150,7 @@ import { LocalStorage } from "./utils/localstorage";
     const itemActions = document.createElement("span");
     itemActions.classList.add("list-item-actions");
     itemActions.appendChild(
-      createButton(() => removeTodo(list, item), "fa fa-trash", "button")
+      createButton(() => removeTodo(item), "fa fa-trash", "button")
     );
     itemActions.appendChild(
       createButton(() => editTodo(item), "fa fa-pencil", "edit")

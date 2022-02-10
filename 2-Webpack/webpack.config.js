@@ -10,17 +10,15 @@ module.exports = {
   output: {
     path: path.resolve(__dirname, "dist"),
     filename: "[name].[contenthash].js",
-    assetModuleFilename: "[name][ext]",
     clean: true,
   },
-  devtool: "inline-source-map",
   devServer: {
     static: "dist",
     port: 5001,
     open: true,
     hot: true,
   },
-  //plugins
+  
   plugins: [
     new HtmlWebpackPlugin({
       title: "Todo App",
@@ -29,7 +27,7 @@ module.exports = {
     }),
     new CopyPlugin({
       patterns: [
-        { from: "**/*.css", to: path.resolve(__dirname, "dist/style.css") },
+        { from: "**/*.css", to: path.resolve(__dirname, "dist/[name].css") },
       ],
     }),
   ],
