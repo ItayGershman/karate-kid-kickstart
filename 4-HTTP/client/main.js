@@ -1,9 +1,9 @@
 import { v4 as uuidv4 } from "uuid";
 import { classes } from "./js-styles/style";
-import { LocalStorage } from "./utils/localstorage";
+import { FetchAPI } from "./utils/fetchAPI";
 
-(function () {
-  const LS = new LocalStorage();
+(async function () {
+  const todosAPI = new FetchAPI()
   const editModeItems = [];
   const todoList = document.getElementById("todoList");
   const inputText = document.getElementById("addTodo");
@@ -13,23 +13,26 @@ import { LocalStorage } from "./utils/localstorage";
     list.forEach((item) => todoList.appendChild(createItem(list, item)));
   };
 
-  const addTodo = () => {
+  const addTodo = async () => {
     const newTodo = {
       text: inputText.value,
       isFinished: false,
       id: uuidv4(),
     };
-    LS.addTodo(newTodo);
-    todoList.insertBefore(
-      createItem(LS.getList(), newTodo),
-      todoList.firstChild
-    );
+    await todosAPI.addTodo(newTodo);
+    try {
+      const todos = await todosAPI.getTodos();
+      console.log(todos);
+      todoList.insertBefore(createItem(todos, newTodo), todoList.firstChild);
+    } catch (error) {
+      console.log(error);
+    }
     inputText.value = "";
   };
 
-  const removeTodo = (item) => {
+  const removeTodo = async (item) => {
     document.getElementById(item.id).remove();
-    LS.removeTodo(item.id);
+    await todosAPI.removeTodo(item.id);
   };
 
   function removeElement(array, elem) {
@@ -38,7 +41,9 @@ import { LocalStorage } from "./utils/localstorage";
   }
 
   const swapDOMComponents = (elem, curr, modifiedElem) => {
-    elem.querySelector(`.${classes.listItemText}`).replaceChild(curr, modifiedElem);
+    elem
+      .querySelector(`.${classes.listItemText}`)
+      .replaceChild(curr, modifiedElem);
   };
 
   const createTodoItem = (item, todoListItem) => {
@@ -61,7 +66,7 @@ import { LocalStorage } from "./utils/localstorage";
     return inputText;
   };
 
-  const editTodo = (item) => {
+  const editTodo = async (item) => {
     const todoListItem = document.getElementById(item.id);
     const isFound = editModeItems.some((element) => element.id === item.id);
     const elemToChange = todoListItem.querySelector(`.${classes.todoText}`);
@@ -70,7 +75,7 @@ import { LocalStorage } from "./utils/localstorage";
       removeElement(editModeItems, item);
       const todoItem = createTodoItem(item, todoListItem);
       swapDOMComponents(todoListItem, todoItem, elemToChange);
-      LS.editTodo(
+      await todosAPI.editTodo(
         { ...item, text: todoItem.innerText, isFinished: item.isFinished },
         item.id
       );
@@ -81,7 +86,7 @@ import { LocalStorage } from "./utils/localstorage";
     }
   };
 
-  const toggleTodo = (item) => {
+  const toggleTodo = async (item) => {
     const todoListItem = document.getElementById(item.id);
     const todoDescription = todoListItem.firstChild.children[1];
     if (item.isFinished) {
@@ -93,7 +98,7 @@ import { LocalStorage } from "./utils/localstorage";
       todoDescription.classList.add(classes.finishedTodo);
       item.isFinished = true;
     }
-    LS.editTodo(item, item.id);
+    await todosAPI.editTodo(item, item.id);
   };
 
   const createButton = (cb, icon, className) => {
@@ -109,15 +114,15 @@ import { LocalStorage } from "./utils/localstorage";
 
   const createSwitchElem = (cb) => {
     const switchElem = document.createElement("label");
-    switchElem.classList.add('switch');
+    switchElem.classList.add("switch");
 
     const checkbox = document.createElement("input");
     checkbox.type = "checkbox";
     checkbox.onclick = cb;
 
     const slider = document.createElement("span");
-    slider.classList.add('slider');
-    slider.classList.add('round');
+    slider.classList.add("slider");
+    slider.classList.add("round");
 
     switchElem.appendChild(checkbox);
     switchElem.appendChild(slider);
@@ -163,12 +168,18 @@ import { LocalStorage } from "./utils/localstorage";
     return todoListItemContainer;
   };
 
-  const editListenerHandler = (e) => {
+  const editListenerHandler = async (e) => {
     const editInputElem = e.target;
     const id = editInputElem.id.split("-editTodo")[0];
-    let updatedItem = LS.getList().find((ele) => ele.id === id);
-    updatedItem.text = editInputElem.value;
-    editTodo(updatedItem);
+    try {
+      const todos = await todosAPI.getTodos();
+      const updatedItem = todos.find((ele) => ele.id === id);
+      console.log(updatedItem)
+      updatedItem.text = editInputElem.value;
+      editTodo(updatedItem);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   document.querySelector("#addTodo").addEventListener("keypress", (e) => {
@@ -178,5 +189,11 @@ import { LocalStorage } from "./utils/localstorage";
   document.querySelector("#todoList").addEventListener("keypress", (e) => {
     if (e.key === "Enter") editListenerHandler(e);
   });
-  loadToDoList(LS.getList().reverse());
+  try {
+    const todos = await todosAPI.getTodos();
+    console.log(todos);
+    loadToDoList(todos.reverse());
+  } catch (error) {
+    console.log(error);
+  }
 })();
