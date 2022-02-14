@@ -5,11 +5,7 @@ export class FetchAPI {
     this.url = "http://localhost:3000";
   }
   getTodos() {
-    console.log("GET todos");
-    return axios
-      .get(`${this.url}`)
-      .then((res) => res.data)
-      .catch((err) => console.log(err));
+    return axios.get(`${this.url}`);
   }
   addTodo(newTodo) {
     return axios.post(`${this.url}`, newTodo);

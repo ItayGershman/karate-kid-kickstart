@@ -3,7 +3,7 @@ import { classes } from "./js-styles/style";
 import { FetchAPI } from "./utils/fetchAPI";
 
 (async function () {
-  const todosAPI = new FetchAPI()
+  const todosAPI = new FetchAPI();
   const editModeItems = [];
   const todoList = document.getElementById("todoList");
   const inputText = document.getElementById("addTodo");
@@ -19,20 +19,25 @@ import { FetchAPI } from "./utils/fetchAPI";
       isFinished: false,
       id: uuidv4(),
     };
-    await todosAPI.addTodo(newTodo);
     try {
-      const todos = await todosAPI.getTodos();
-      console.log(todos);
-      todoList.insertBefore(createItem(todos, newTodo), todoList.firstChild);
+      const todos = await todosAPI.addTodo(newTodo);
+      todoList.insertBefore(
+        createItem(todos.data, newTodo),
+        todoList.firstChild
+      );
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
     inputText.value = "";
   };
 
   const removeTodo = async (item) => {
     document.getElementById(item.id).remove();
-    await todosAPI.removeTodo(item.id);
+    try {
+      await todosAPI.removeTodo(item.id);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   function removeElement(array, elem) {
@@ -70,15 +75,18 @@ import { FetchAPI } from "./utils/fetchAPI";
     const todoListItem = document.getElementById(item.id);
     const isFound = editModeItems.some((element) => element.id === item.id);
     const elemToChange = todoListItem.querySelector(`.${classes.todoText}`);
-    console.log(elemToChange);
     if (isFound) {
       removeElement(editModeItems, item);
       const todoItem = createTodoItem(item, todoListItem);
       swapDOMComponents(todoListItem, todoItem, elemToChange);
-      await todosAPI.editTodo(
-        { ...item, text: todoItem.innerText, isFinished: item.isFinished },
-        item.id
-      );
+      try {
+        await todosAPI.editTodo(
+          { ...item, text: todoItem.innerText, isFinished: item.isFinished },
+          item.id
+        );
+      } catch (error) {
+        console.log(error);
+      }
     } else {
       editModeItems.push(item);
       const inputText = createEditTodoElem(elemToChange, item);
@@ -98,7 +106,11 @@ import { FetchAPI } from "./utils/fetchAPI";
       todoDescription.classList.add(classes.finishedTodo);
       item.isFinished = true;
     }
-    await todosAPI.editTodo(item, item.id);
+    try {
+      await todosAPI.editTodo(item, item.id);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const createButton = (cb, icon, className) => {
@@ -172,13 +184,12 @@ import { FetchAPI } from "./utils/fetchAPI";
     const editInputElem = e.target;
     const id = editInputElem.id.split("-editTodo")[0];
     try {
-      const todos = await todosAPI.getTodos();
-      const updatedItem = todos.find((ele) => ele.id === id);
-      console.log(updatedItem)
+      const { data } = await todosAPI.getTodos();
+      const updatedItem = data.find((ele) => ele.id === id);
       updatedItem.text = editInputElem.value;
       editTodo(updatedItem);
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
@@ -190,9 +201,8 @@ import { FetchAPI } from "./utils/fetchAPI";
     if (e.key === "Enter") editListenerHandler(e);
   });
   try {
-    const todos = await todosAPI.getTodos();
-    console.log(todos);
-    loadToDoList(todos.reverse());
+    const { data } = await todosAPI.getTodos();
+    loadToDoList(data.reverse());
   } catch (error) {
     console.log(error);
   }
