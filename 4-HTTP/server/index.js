@@ -13,22 +13,23 @@ app.use(express.json());
 
 let list = [];
 
-app.get("/", (req, res) => {
+app.get("/todos", (req, res) => {
   res.send(list);
 });
 
-app.post("/", (req, res) => {
+app.post("/todo", (req, res) => {
   list.push(req.body);
   res.send(list);
 });
-app.put("/:id", (req, res) => {
+
+app.put("/todo/:id", (req, res) => {
   list = list.map((todo) => {
-    if (todo.id === req.params.id) return req.body.data;
-    else return todo;
+    return todo.id === req.params.id ? req.body.data : todo;
   });
   res.send(list);
 });
-app.delete("/:id", (req, res) => {
+
+app.delete("/todo/:id", (req, res) => {
   list = list.filter(({ id }) => id !== req.params.id);
   res.send(list);
 });

@@ -4,12 +4,20 @@
   --red-danger: #b63423;
   --green: #30b44c;
   --black: #000000;
+  --gray: #ccc;
+  --pale-blue: #63a4ff;
+  --torquoise: #83eaf1;
+  --font-family: "Helvetica Neue", Helvetica, Arial;
 }
 
 body {
   height: 100vh;
-  background-color: #63a4ff;
-  background-image: linear-gradient(315deg, #63a4ff 0%, #83eaf1 74%);
+  background-color: var(--pale-blue);
+  background-image: linear-gradient(
+    315deg,
+    var(--pale-blue) 0%,
+    var(--torquoise) 74%
+  );
 }
 
 .header {
@@ -17,7 +25,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: "Helvetica Neue", Helvetica, Arial;
+  font-family: var(--font-family);
   margin-bottom: 10px;
 }
 
@@ -25,7 +33,7 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: "Helvetica Neue", Helvetica, Arial;
+  font-family: var(--font-family);
 }
 
 .list-item-text {
@@ -41,10 +49,10 @@ body {
   outline: 0;
   height: 40px;
   padding-left: 10px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--gray);
 }
 .add-todo:focus {
-  border: 1px solid #63a4ff;
+  border: 1px solid var(--pale-blue);
 }
 
 .edit-todo {
@@ -54,11 +62,11 @@ body {
   height: 30px;
   margin-left: 10px;
   padding-left: 10px;
-  border: 1px solid #ccc;
+  border: 1px solid var(--gray);
   font-size: 16px;
 }
 .add-todo:focus {
-  border: 1px solid #63a4ff;
+  border: 1px solid var(--pale-blue);
 }
 
 .list {
@@ -160,7 +168,7 @@ body {
   left: 0;
   right: 0;
   bottom: 0;
-  background-color: #ccc;
+  background-color: var(--gray);
   -webkit-transition: 0.4s;
   transition: 0.4s;
 }

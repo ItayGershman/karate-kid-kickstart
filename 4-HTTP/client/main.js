@@ -1,43 +1,49 @@
 import { v4 as uuidv4 } from "uuid";
 import { classes } from "./js-styles/style";
-import { FetchAPI } from "./utils/fetchAPI";
+import { TodosAPI } from "./utils/TodosAPI";
+import {
+  createEditTodoElem,
+  createItem,
+  createTodoItem,
+} from "./utils/generateElements";
+import { editTodoSuffix } from "./utils/constants";
 
 (async function () {
-  const todosAPI = new FetchAPI();
+  const URL = "http://localhost:3000";
+  const todosAPI = new TodosAPI(URL);
   const editModeItems = [];
   const todoList = document.getElementById("todoList");
   const inputText = document.getElementById("addTodo");
 
   const loadToDoList = (list) => {
     todoList.innerHTML = "";
-    list.forEach((item) => todoList.appendChild(createItem(list, item)));
+    list.forEach((item) =>
+      todoList.appendChild(createItem(item, removeTodo, editTodo, toggleTodo))
+    );
   };
 
-  const addTodo = async () => {
+  const errorHandler = (e) => {
+    console.error(e);
+  };
+
+  const addTodo = () => {
     const newTodo = {
       text: inputText.value,
       isFinished: false,
       id: uuidv4(),
     };
-    try {
-      const todos = await todosAPI.addTodo(newTodo);
-      todoList.insertBefore(
-        createItem(todos.data, newTodo),
-        todoList.firstChild
-      );
-    } catch (error) {
-      console.error(error);
-    }
+    todosAPI
+      .addTodo(newTodo)
+      .then(() => {
+        todoList.prepend(createItem(newTodo, removeTodo, editTodo, toggleTodo));
+      })
+      .catch(errorHandler);
     inputText.value = "";
   };
 
-  const removeTodo = async (item) => {
+  const removeTodo = (item) => {
     document.getElementById(item.id).remove();
-    try {
-      await todosAPI.removeTodo(item.id);
-    } catch (error) {
-      console.error(error);
-    }
+    todosAPI.removeTodo(item.id).catch(errorHandler);
   };
 
   function removeElement(array, elem) {
@@ -45,152 +51,51 @@ import { FetchAPI } from "./utils/fetchAPI";
     if (index > -1) array.splice(index, 1);
   }
 
-  const swapDOMComponents = (elem, curr, modifiedElem) => {
+  const replaceTodoTextWithEditInput = (elem, curr, modifiedElem) => {
     elem
       .querySelector(`.${classes.listItemText}`)
       .replaceChild(curr, modifiedElem);
   };
 
-  const createTodoItem = (item, todoListItem) => {
-    const todoItem = document.createElement("span");
-    todoItem.innerText = document.getElementById(`${item.id}-editTodo`).value;
-    todoItem.classList.add(classes.todoText);
-    if (item.isFinished) {
-      todoItem.classList.add(classes.finishedTodo);
-      todoListItem.firstChild.checked = true;
-    }
-    return todoItem;
-  };
-
-  const createEditTodoElem = (elemToChange, item) => {
-    const inputText = document.createElement("input");
-    inputText.type = "text";
-    inputText.value = elemToChange.innerText;
-    inputText.classList.add(classes.todoText, classes.editTodo);
-    inputText.id = `${item.id}-editTodo`;
-    return inputText;
-  };
-
-  const editTodo = async (item) => {
+  const editTodo = (item) => {
     const todoListItem = document.getElementById(item.id);
     const isFound = editModeItems.some((element) => element.id === item.id);
     const elemToChange = todoListItem.querySelector(`.${classes.todoText}`);
     if (isFound) {
       removeElement(editModeItems, item);
       const todoItem = createTodoItem(item, todoListItem);
-      swapDOMComponents(todoListItem, todoItem, elemToChange);
-      try {
-        await todosAPI.editTodo(
+      //const switchElem = createSwitchElem(() => toggleTodo(item));
+      replaceTodoTextWithEditInput(todoListItem, todoItem, elemToChange);
+      todosAPI
+        .editTodo(
           { ...item, text: todoItem.innerText, isFinished: item.isFinished },
           item.id
-        );
-      } catch (error) {
-        console.log(error);
-      }
+        )
+        .catch(errorHandler);
     } else {
       editModeItems.push(item);
       const inputText = createEditTodoElem(elemToChange, item);
-      swapDOMComponents(todoListItem, inputText, elemToChange);
+      replaceTodoTextWithEditInput(todoListItem, inputText, elemToChange);
     }
   };
 
-  const toggleTodo = async (item) => {
-    const todoListItem = document.getElementById(item.id);
-    const todoDescription = todoListItem.firstChild.children[1];
-    if (item.isFinished) {
-      todoDescription.classList.remove(classes.finishedTodo);
-      todoDescription.classList.add(classes.unfinishedTodo);
-      item.isFinished = false;
-    } else {
-      todoDescription.classList.remove(classes.unfinishedTodo);
-      todoDescription.classList.add(classes.finishedTodo);
-      item.isFinished = true;
-    }
-    try {
-      await todosAPI.editTodo(item, item.id);
-    } catch (error) {
-      console.error(error);
-    }
+  const toggleTodo = (item) => {
+    const todoItem = document.getElementById(item.id);
+    const todoText = todoItem.querySelector(`.${classes.todoText}`);
+    todoText.classList.toggle(classes.finishedTodo);
+    todoText.classList.toggle(classes.unfinishedTodo);
+    item.isFinished = !item.isFinished;
+    todosAPI.editTodo(item, item.id).catch(errorHandler);
   };
 
-  const createButton = (cb, icon, className) => {
-    const button = document.createElement("button");
-    const iTag = document.createElement("i");
-    iTag.className = icon;
-    button.append(iTag);
-    button.classList.add(className);
-    button.addEventListener("click", cb);
-    button.style.cursor = "pointer";
-    return button;
-  };
-
-  const createSwitchElem = (cb) => {
-    const switchElem = document.createElement("label");
-    switchElem.classList.add("switch");
-
-    const checkbox = document.createElement("input");
-    checkbox.type = "checkbox";
-    checkbox.onclick = cb;
-
-    const slider = document.createElement("span");
-    slider.classList.add("slider");
-    slider.classList.add("round");
-
-    switchElem.appendChild(checkbox);
-    switchElem.appendChild(slider);
-    return switchElem;
-  };
-
-  const createTextItem = (item, switchElem) => {
-    const todoDescription = document.createElement("span");
-    todoDescription.innerText = item.text;
-    todoDescription.classList.add(classes.todoText);
-    if (item.isFinished) {
-      todoDescription.classList.add(classes.finishedTodo);
-      switchElem.firstChild.checked = true;
-    }
-    return todoDescription;
-  };
-
-  const createListItem = (item) => {
-    const listItemContainer = document.createElement("div");
-    listItemContainer.classList.add(classes.listItemText);
-    const switchElem = createSwitchElem(() => toggleTodo(item));
-    listItemContainer.appendChild(switchElem);
-    listItemContainer.appendChild(createTextItem(item, switchElem));
-    return listItemContainer;
-  };
-
-  const createItem = (list, item) => {
-    const todoListItemContainer = document.createElement("li");
-    todoListItemContainer.id = item.id;
-    const listItem = createListItem(item);
-
-    const itemActions = document.createElement("span");
-    itemActions.classList.add(classes.listItemActions);
-    itemActions.appendChild(
-      createButton(() => removeTodo(item), "fa fa-trash", classes.button)
-    );
-    itemActions.appendChild(
-      createButton(() => editTodo(item), "fa fa-pencil", classes.edit)
-    );
-
-    todoListItemContainer.appendChild(listItem);
-    todoListItemContainer.appendChild(itemActions);
-    return todoListItemContainer;
-  };
-
-  const editListenerHandler = async (e) => {
+  const editListenerHandler = (e) => {
     const editInputElem = e.target;
-    const id = editInputElem.id.split("-editTodo")[0];
-    try {
-      const { data } = await todosAPI.getTodos();
-      const updatedItem = data.find((ele) => ele.id === id);
-      updatedItem.text = editInputElem.value;
-      editTodo(updatedItem);
-    } catch (error) {
-      console.error(error);
-    }
+    const id = editInputElem.id.split(editTodoSuffix)[0];
+    const switchElem = document.getElementById(id);
+    const isTodoFinished = switchElem.querySelector(
+      'input[type="checkbox"]'
+    ).checked;
+    editTodo({ id, text: editInputElem.value, isFinished: isTodoFinished });
   };
 
   document.querySelector("#addTodo").addEventListener("keypress", (e) => {
@@ -200,10 +105,10 @@ import { FetchAPI } from "./utils/fetchAPI";
   document.querySelector("#todoList").addEventListener("keypress", (e) => {
     if (e.key === "Enter") editListenerHandler(e);
   });
-  try {
-    const { data } = await todosAPI.getTodos();
-    loadToDoList(data.reverse());
-  } catch (error) {
-    console.log(error);
-  }
+  todosAPI
+    .getTodos()
+    .then(({ data }) => {
+      loadToDoList(data.reverse());
+    })
+    .catch(errorHandler);
 })();

@@ -4,4 +4,6 @@ export const colors = {
   redDanger: "#b63423",
   green: "#30b44c",
   black: "#000000",
+  paleblue:'#63a4ff',
+  gray:"#ccc"
 };

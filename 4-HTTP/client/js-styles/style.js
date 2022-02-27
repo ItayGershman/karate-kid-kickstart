@@ -14,22 +14,22 @@ const style = {
     outline: 0,
     height: 40,
     paddingLeft: 10,
-    border: "1px solid #ccc",
+    border: `1px solid ${colors.gray}`,
     "&:focus": {
-      border: "1px solid #63a4ff",
+      border: `1px solid ${colors.paleblue}`,
     },
   },
   editTodo: {
-    width: "70%",
+    flexGrow: 1,
     borderRadius: 10,
     outline: 0,
     height: 30,
-    marginLeft: 10,
+    margin: "0px 20px",
     paddingLeft: 10,
-    border: "1px solid #ccc",
+    border: `1px solid ${colors.gray}`,
     fontSize: 16,
     "&:focus": {
-      border: "1px solid #63a4ff",
+      border: `1px solid ${colors.paleblue}`,
     },
   },
   listItemActions: {
@@ -40,7 +40,7 @@ const style = {
   button: {
     backgroundColor: colors.redDanger,
     border: `1px solid ${colors.redDanger}`,
-    color: "white",
+    color: colors.white,
     padding: "4px 12px",
     marginBottom: 5,
     textAlign: "center",
@@ -57,7 +57,7 @@ const style = {
   edit: {
     backgroundColor: colors.green,
     border: `1px solid ${colors.green}`,
-    color: "white",
+    color: colors.white,
     padding: "4px 12px",
     marginBottom: 5,
     textAlign: "center",

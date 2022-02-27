@@ -1,13 +1,15 @@
+import todoList from "./constants"
+
 export class LocalStorage {
   constructor() {
-    if (!localStorage.getItem("todoList"))
-      localStorage.setItem("todoList", JSON.stringify([]));
+    if (!localStorage.getItem(todoList))
+      localStorage.setItem(todoList, JSON.stringify([]));
   }
   getList() {
-    return JSON.parse(localStorage.getItem("todoList"));
+    return JSON.parse(localStorage.getItem(todoList));
   }
   #saveList(list) {
-    localStorage.setItem("todoList", JSON.stringify(list));
+    localStorage.setItem(todoList, JSON.stringify(list));
   }
   addTodo(item) {
     this.#saveList([...this.getList(), item]);
