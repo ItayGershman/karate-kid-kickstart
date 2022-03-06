@@ -1,24 +1,28 @@
 import express, { Application } from "express";
 import cookieParser from "cookie-parser";
-import router from "./router/routes";
+
 import { addCookie } from "./middlewares/cookieMW";
-require("./config.ts");
+import { todoRouter } from "./router/routes";
 
-const app: Application = express();
-const port: Number|string = process.env.PORT || 3000;
+export const myApp = (db: any) => {
+  const app = express();
+  const port: Number | string = process.env.PORT || 3000;
 
-app.use(
-  express.urlencoded({
-    extended: true,
-  })
-);
-app.use(express.json());
-app.use(express.static("public"));
-app.use(cookieParser());
+  app.use(
+    express.urlencoded({
+      extended: true,
+    })
+  );
+  app.use(express.json());
+  app.use(express.static("public"));
+  app.use(cookieParser());
 
-app.use(addCookie);
-app.use("/todos", router);
+  app.use(addCookie);
+  app.use("/todos", todoRouter(db));
 
-app.listen(port, () => {
-  console.log(`Todo app listening on port ${port}`);
-});
+  return {
+    start: () => app.listen(port, () => {
+      console.log(`Todo app listening on port ${port}`);
+    }),
+  };
+};

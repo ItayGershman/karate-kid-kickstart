@@ -1,17 +1,12 @@
 import { Schema, model } from "mongoose";
+import { ITodo } from "../interfaces/todoInterface";
 
-export interface ITodo {
-  text: string;
-  isFinished: boolean;
-  id: string;
-  user_id: string;
-}
-
-export const todoSchema = new Schema<ITodo>({
+const todoSchema = new Schema<ITodo>({
   text: String,
   isFinished: Boolean,
   id: String,
-  user_id: String,
+  userID: String,
 });
 
-module.exports = model<ITodo>("todos", todoSchema);
+const TodoModel = model("todos", todoSchema);
+export default TodoModel;
