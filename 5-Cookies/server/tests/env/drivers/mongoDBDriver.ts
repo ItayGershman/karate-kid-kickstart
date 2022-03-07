@@ -1,10 +1,9 @@
-import { ITodo, ITodoDB } from "../../../interfaces/todoInterface";
 import { MongoMemoryServer } from "mongodb-memory-server";
 
 import mongoose from "mongoose";
-import TodoModel from "../../../models/Todo";
+import { MongoDB } from "../../../utils/MongoDB";
 
-export class MongoDriver implements ITodoDB {
+export class MongoDriver extends MongoDB {
   mongoServer;
   contstrucor() {}
   async setup() {
@@ -27,28 +26,4 @@ export class MongoDriver implements ITodoDB {
       await collection.deleteMany({});
     }
   }
-
-  getTodos = async (userID) => {
-    try {
-      const todos = await TodoModel.find({ userID: userID });
-      return todos;
-    } catch (error) {
-      console.log(error);
-    }
-  };
-  createTodo = (todo: ITodo) => {
-    const res = new TodoModel(todo).save();
-    return res.then(({ text, isFinished, id, userID }: ITodo) => ({
-      text, isFinished, id, userID
-    }));
-  };
-  updateTodo = (
-    todo: ITodo,
-    id: string,
-    options: object = {},
-    cb: Function
-  ) => {
-    return TodoModel.findOneAndUpdate({ id:id }, { $set: todo }, options, cb());
-  };
-  removeTodo: (id: string) => {};
 }

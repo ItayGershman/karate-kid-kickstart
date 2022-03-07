@@ -1,10 +1,11 @@
-import express, { Application } from "express";
+import express from "express";
 import cookieParser from "cookie-parser";
 
 import { addCookie } from "./middlewares/cookieMW";
 import { todoRouter } from "./router/routes";
+import { ITodoDB } from "./interfaces/todoInterface";
 
-export const myApp = (db: any, port: Number) => {
+export const myApp = (db: ITodoDB, port: Number | String) => {
   const app = express();
 
   app.use(

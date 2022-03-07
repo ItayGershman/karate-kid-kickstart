@@ -50,8 +50,9 @@ export class AppDriver {
   }
 
   removeTodo(id) {
+    const url = `${this.url}/todos/${id || ""}`
     return axios.delete(
-      `${this.url}/todos/${id}`,
+      url,
       this.userID && {
         headers: {
           Cookie: `userID=${this.userID};`,

@@ -8,7 +8,7 @@ export interface ITodo {
 export interface ITodoDB {
   getTodos: (userID: string) => void;
   createTodo: (todo: ITodo) => void;
-  updateTodo: (todo: ITodo, id: string, options: object, cb: Function) => void;
+  updateTodo: (todo: ITodo, id: string, options: object) => void;
   removeTodo: (id: string) => void;
 }
 

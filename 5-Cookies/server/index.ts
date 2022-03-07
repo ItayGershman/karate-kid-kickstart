@@ -1,4 +1,6 @@
-require("./config.ts");
-const app = require("./app")
-const db = require('./services/mongodbService')
-app(db).start()
+import { MongoDBService } from "./services/MongoDBSerivce";
+
+const {myApp} = require("./app");
+const db = new MongoDBService();
+db.connect();
+myApp(db,3000).start();
