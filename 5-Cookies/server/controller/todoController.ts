@@ -1,24 +1,25 @@
 import { Request, Response } from "express";
+import { ITodo, ITodoController } from "../interfaces/todoInterface";
 import TodoModel from "../models/Todo";
 
-export class TodoController {
+export class TodoController implements ITodoController {
   db: any;
   constructor(db: any) {
     this.db = db;
   }
-  getTodos = async (req: Request, res: Response): Promise<void> => {
+  async getTodos(req: Request, res: Response): Promise<void> {
     try {
       const userID = req.body.userID;
       const todos = await this.db.getTodos(userID);
-      // if (err) res.status(400).send(err);
       res.status(200).json(todos);
     } catch (error) {
       res.status(500).send(error);
     }
-  };
+  }
+
   async createTodo(req: Request, res: Response): Promise<void> {
-    const userID = req.body.userID;
-    const todo = {
+    const userID: string = req.body.userID;
+    const todo: ITodo = {
       text: req.body.text,
       isFinished: req.body.isFinished,
       id: req.body.id,
@@ -27,29 +28,32 @@ export class TodoController {
     this.db
       .createTodo(todo)
       .then((todo) => {
+        console.log(todo);
         res.status(200).json(todo);
       })
       .catch((err) => res.status(500).send(`${err}`));
   }
   async updateTodo(req: Request, res: Response): Promise<void> {
-    try {
-      TodoModel.findOneAndUpdate(
-        { id: req.params.id },
+    this.db
+      .updateTodo(
         {
-          $set: {
-            text: req.body.data.text,
-            isFinished: req.body.data.isFinished,
-          },
+          text: req.body.data.text,
+          isFinished: req.body.data.isFinished,
         },
+        req.params.id,
         { new: true },
-        (err, doc) => {
-          if (err) res.status(400).send(err);
-          else res.status(200).json(doc);
+        (err, todo) => {
+          if (err) {
+            res.status(400).send(err);
+          } else {
+            res.status(200).send("Item updated successfully");
+          }
         }
-      );
-    } catch (err) {
-      res.status(500).send(err);
-    }
+      )
+      .catch((e) => {
+        console.log("Error");
+        res.status(500).send("Internal Server Error");
+      });
   }
   async deleteTodo(req: Request, res: Response): Promise<void> {
     try {

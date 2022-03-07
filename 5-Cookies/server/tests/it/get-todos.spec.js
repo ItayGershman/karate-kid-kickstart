@@ -1,5 +1,4 @@
 const { TestKit } = require("../TestKit");
-const { createMockTodo } = require("../utils/utils");
 
 describe("Todos test - GET endpoint", () => {
   const testKit = new TestKit();

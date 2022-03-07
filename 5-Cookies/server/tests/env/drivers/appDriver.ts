@@ -37,8 +37,9 @@ export class AppDriver {
   }
 
   editTodo(newTodo, id) {
+    const url = `${this.url}/todos/${id || ""}`
     return axios.put(
-      `${this.url}/todos/${id}`,
+      url,
       { data: newTodo },
       this.userID && {
         headers: {

@@ -4,9 +4,8 @@ import cookieParser from "cookie-parser";
 import { addCookie } from "./middlewares/cookieMW";
 import { todoRouter } from "./router/routes";
 
-export const myApp = (db: any) => {
+export const myApp = (db: any, port: Number) => {
   const app = express();
-  const port: Number | string = process.env.PORT || 3000;
 
   app.use(
     express.urlencoded({
@@ -21,8 +20,9 @@ export const myApp = (db: any) => {
   app.use("/todos", todoRouter(db));
 
   return {
-    start: () => app.listen(port, () => {
-      console.log(`Todo app listening on port ${port}`);
-    }),
+    start: () =>
+      app.listen(port, () => {
+        console.log(`Todo app listening on port ${port}`);
+      }),
   };
 };

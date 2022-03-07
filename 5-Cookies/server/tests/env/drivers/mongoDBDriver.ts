@@ -27,22 +27,28 @@ export class MongoDriver implements ITodoDB {
       await collection.deleteMany({});
     }
   }
-  
+
   getTodos = async (userID) => {
     try {
-      const todos =  await TodoModel.find({ userID: userID });
+      const todos = await TodoModel.find({ userID: userID });
       return todos;
     } catch (error) {
       console.log(error);
     }
   };
   createTodo = (todo: ITodo) => {
-    try {
-      return new TodoModel(todo).save();
-    } catch (error) {
-      throw new Error(error);
-    }
+    const res = new TodoModel(todo).save();
+    return res.then(({ text, isFinished, id, userID }: ITodo) => ({
+      text, isFinished, id, userID
+    }));
   };
-  updateTodo: (todo: ITodo, id: string) => {};
+  updateTodo = (
+    todo: ITodo,
+    id: string,
+    options: object = {},
+    cb: Function
+  ) => {
+    return TodoModel.findOneAndUpdate({ id:id }, { $set: todo }, options, cb());
+  };
   removeTodo: (id: string) => {};
 }

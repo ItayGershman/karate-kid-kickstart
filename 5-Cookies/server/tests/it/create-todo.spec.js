@@ -13,9 +13,10 @@ describe("Todos tests - POST", () => {
     const { appDriver, mongoDBDriver } = testKit.drivers();
     const newTodo1 = createMockTodo("test1");
     appDriver.setUserCookie(newTodo1.userID);
-    await appDriver.createTodo(newTodo1);
+    const res = await appDriver.createTodo(newTodo1);
+    expect(res.status).toBe(200)
 
-    let todos = await mongoDBDriver.getTodos(newTodo1.userID);
+    const todos = await mongoDBDriver.getTodos(newTodo1.userID);
     expect(todos[0].text).toBe("test1");
     expect(todos.length).toBe(1);
   });
@@ -28,7 +29,7 @@ describe("Todos tests - POST", () => {
     await appDriver.createTodo(newTodo1);
     appDriver.setUserCookie(newTodo2.userID);
     await appDriver.createTodo(newTodo2);
-    let todos = await mongoDBDriver.getTodos(newTodo2.userID);
+    const todos = await mongoDBDriver.getTodos(newTodo2.userID);
 
     expect(todos[0].text).toBe("test2");
     expect(todos.length).toBe(1);

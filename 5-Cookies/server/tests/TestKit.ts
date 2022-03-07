@@ -9,11 +9,13 @@ export class TestKit {
   private mongoDBDriver;
   constructor() {}
   async setup() {
-    this.appDriver = new AppDriver("http://localhost:3000");
-
+    const port = Math.ceil((Math.random() * 10000 + 1000))
+    this.appDriver = new AppDriver(`http://localhost:${port}`);
+    
     this.mongoDBDriver = new MongoDriver();
 
-    const app = myApp(this.mongoDBDriver);
+    const app = myApp(this.mongoDBDriver, port);
+
     this.server = app.start();
     await this.mongoDBDriver.setup();
   }
@@ -23,5 +25,4 @@ export class TestKit {
   drivers() {
     return { appDriver: this.appDriver, mongoDBDriver: this.mongoDBDriver };
   }
-  
 }

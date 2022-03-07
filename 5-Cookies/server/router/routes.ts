@@ -1,12 +1,10 @@
 import express, { Request, Response } from "express";
 const { TodoController } = require("../controller/todoController");
 
-
 export const todoRouter = (db: any) => {
-
   const router = express.Router();
   const todoController = new TodoController(db);
-  
+
   router.get("/", (req: Request, res: Response) => {
     todoController.getTodos(req, res);
   });
@@ -22,6 +20,6 @@ export const todoRouter = (db: any) => {
   router.delete("/:id", (req: Request, res: Response) => {
     todoController.deleteTodo(req, res);
   });
-  
+
   return router;
 };
