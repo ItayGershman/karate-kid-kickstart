@@ -1,8 +1,8 @@
 import axios from "axios";
 
 export class AppDriver {
-  url;
-  userID;
+  url:string;
+  userID:string;
   constructor(url: string) {
     this.url = url;
   }

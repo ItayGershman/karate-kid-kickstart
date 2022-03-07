@@ -1,10 +1,9 @@
-const { TestKit } = require("../TestKit");
-const { createMockTodo } = require("../utils/utils");
+import { TestKit } from "../TestKit";
+import { createMockTodo } from "../utils/utils";
 
 describe("Todos tests - POST", () => {
   const testKit = new TestKit();
-  beforeAll(() => testKit.setup());
-  afterAll(() => testKit.teardown());
+  testKit.beforeAndAfter()
   afterEach(() => {
     const { mongoDBDriver } = testKit.drivers();
     mongoDBDriver.emptyDB();
@@ -14,7 +13,7 @@ describe("Todos tests - POST", () => {
     const newTodo1 = createMockTodo("test1");
     appDriver.setUserCookie(newTodo1.userID);
     const res = await appDriver.createTodo(newTodo1);
-    expect(res.status).toBe(200)
+    expect(res.status).toBe(200);
 
     const todos = await mongoDBDriver.getTodos(newTodo1.userID);
     expect(todos[0].text).toBe("test1");

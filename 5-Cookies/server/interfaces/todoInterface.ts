@@ -6,10 +6,10 @@ export interface ITodo {
   userID: string;
 }
 export interface ITodoDB {
-  getTodos: (userID: string) => void;
-  createTodo: (todo: ITodo) => void;
-  updateTodo: (todo: ITodo, id: string, options: object) => void;
-  removeTodo: (id: string) => void;
+  getTodos: (userID: string) => Promise<ITodo[]>;
+  createTodo: (todo: ITodo) => Promise<ITodo>;
+  updateTodo: (todo: Partial<ITodo>, id: string, options: object) => Promise<ITodo>;
+  removeTodo: (id: string) => Promise<ITodo>;
 }
 
 export interface ITodoController {

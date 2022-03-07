@@ -1,14 +1,15 @@
 import { ITodo, ITodoDB } from "../interfaces/todoInterface";
 import TodoModel from "../models/Todo";
+import { errorHandler } from "./errorHandler";
 
 export class MongoDB implements ITodoDB {
-  constructor(){}
+  constructor() {}
   getTodos = async (userID) => {
     try {
       const todos = await TodoModel.find({ userID: userID });
       return todos;
     } catch (error) {
-      console.log(error);
+      errorHandler(error);
     }
   };
   createTodo = (todo: ITodo) => {
@@ -20,7 +21,11 @@ export class MongoDB implements ITodoDB {
       userID,
     }));
   };
-  updateTodo = async (todo: ITodo, id: string, options: object = {}) => {
+  updateTodo = async (
+    todo: Partial<ITodo>,
+    id: string,
+    options: object = {}
+  ) => {
     return await TodoModel.findOneAndUpdate(
       { id: id },
       { $set: todo },

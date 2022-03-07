@@ -1,6 +1,7 @@
 import { MongoMemoryServer } from "mongodb-memory-server";
 
 import mongoose from "mongoose";
+import { errorHandler } from "../../../utils/errorHandler";
 import { MongoDB } from "../../../utils/MongoDB";
 
 export class MongoDriver extends MongoDB {
@@ -10,8 +11,8 @@ export class MongoDriver extends MongoDB {
     try {
       this.mongoServer = await MongoMemoryServer.create();
       await mongoose.connect(this.mongoServer.getUri());
-    } catch (e) {
-      console.log(e);
+    } catch (error) {
+      errorHandler(error)
     }
   }
   async teardown() {

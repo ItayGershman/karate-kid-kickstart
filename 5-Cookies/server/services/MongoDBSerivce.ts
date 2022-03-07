@@ -1,3 +1,4 @@
+import { errorHandler } from "../utils/errorHandler";
 import { MongoDB } from "../utils/MongoDB";
 
 require("dotenv").config("karate-kid-kickstart/5-Cookies/server/.env");
@@ -19,8 +20,8 @@ export class MongoDBService extends MongoDB {
         .connect(url, options)
         .then(() => console.log(`connected`))
         .catch((err) => console.error(`connection error: ${err}`));
-    } catch (e) {
-      console.log(e);
+    } catch (error) {
+      errorHandler(error)
     }
   }
   async disconnect() {

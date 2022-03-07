@@ -1,14 +1,14 @@
 import { Request, Response } from "express";
-import { ITodo, ITodoController } from "../interfaces/todoInterface";
+import { ITodo, ITodoController, ITodoDB } from "../interfaces/todoInterface";
 
 export class TodoController implements ITodoController {
-  db: any;
-  constructor(db: any) {
+  db: ITodoDB;
+  constructor(db:  ITodoDB) {
     this.db = db;
   }
   async getTodos(req: Request, res: Response): Promise<void> {
     try {
-      const userID = req.body.userID;
+      const userID:string = req.body.userID;
       const todos = await this.db.getTodos(userID);
       res.status(200).json(todos);
     } catch (error) {
@@ -32,7 +32,7 @@ export class TodoController implements ITodoController {
       .catch((err) => res.status(500).send(`${err}`));
   }
   async updateTodo(req: Request, res: Response): Promise<void> {
-    const { text, isFinished } = req.body.data;
+    const { text, isFinished }:{text:string,isFinished:boolean} = req.body.data;
     this.db
       .updateTodo({ text, isFinished }, req.params.id, { new: true })
       .then((doc) => {
@@ -54,10 +54,6 @@ export class TodoController implements ITodoController {
         .catch((e) => {
           res.status(500).send(e);
         });
-      // TodoModel.findOneAndDelete({ id: req.params.id }, (err) => {
-      //   if (err) res.status(400).send(err);
-      //   else res.status(200).send("Todo deleted successfully");
-      // });
     } catch (err) {
       res.status(500).send(err);
     }

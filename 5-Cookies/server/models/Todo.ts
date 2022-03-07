@@ -5,7 +5,7 @@ const todoSchema = new Schema<ITodo>({
   text: String,
   isFinished: Boolean,
   id: String,
-  userID: String,
+  userID: String
 });
 
 const TodoModel = model("todos", todoSchema);

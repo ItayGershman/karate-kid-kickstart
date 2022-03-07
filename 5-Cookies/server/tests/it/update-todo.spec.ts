@@ -1,10 +1,9 @@
-const { TestKit } = require("../TestKit");
-const { createMockTodo } = require("../utils/utils");
+import { TestKit } from "../TestKit";
+import { createMockTodo } from "../utils/utils";
 
 describe("Todos tests - PUT endpoint", () => {
   const testKit = new TestKit();
-  beforeAll(() => testKit.setup());
-  afterAll(() => testKit.teardown());
+  testKit.beforeAndAfter()
   it("Update a todo without id - should get 400 error", async () => {
     const { appDriver } = testKit.drivers();
     const newTodo = createMockTodo("create a todo");
