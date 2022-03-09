@@ -1,7 +1,8 @@
+import { errorMessages } from "../../../common/errorMessages";
 import { TestKit } from "../TestKit";
 import { createMockTodo } from "../utils/utils";
 
-describe("Todos tests - DELETE", () => {
+describe("DELETE /todos", () => {
   const testKit = new TestKit();
   testKit.beforeAndAfter()
   afterEach(() => {
@@ -14,6 +15,7 @@ describe("Todos tests - DELETE", () => {
       await appDriver.removeTodo("1");
     } catch (error) {
       expect(error.response.status).toBe(400);
+      expect(error.response.data).toBe(errorMessages.statusCode400.deleteItemMsg);
     }
   });
 

@@ -2,7 +2,7 @@ import express from "express";
 import cookieParser from "cookie-parser";
 
 import { addCookie } from "./middlewares/cookieMW";
-import { todoRouter } from "./router/routes";
+import { todosRouter } from "./router/routes";
 import { ITodoDB } from "./interfaces/todoInterface";
 
 export const myApp = (db: ITodoDB, port: Number | String) => {
@@ -18,7 +18,7 @@ export const myApp = (db: ITodoDB, port: Number | String) => {
   app.use(cookieParser());
 
   app.use(addCookie);
-  app.use("/todos", todoRouter(db));
+  app.use("/todos", todosRouter(db));
 
   return {
     start: () =>

@@ -1,14 +1,11 @@
-import { NextFunction, Request, Response } from "express";
+import { RequestHandler } from "express";
 import { v4 as uuidv4 } from "uuid";
-import { userID } from "../constants";
 
-export const addCookie = (req: Request, res: Response, next: NextFunction) => {
-  let cookieToken: string = req.cookies[userID];
-  if (cookieToken) {
-    req.body[userID] = req.cookies[userID];
-  } else {
+export const addCookie: RequestHandler = (req, res, next) => {
+  let cookieToken: string = req.cookies.userID;
+  if (!cookieToken) {
     cookieToken = uuidv4();
-    res.cookie(userID, cookieToken);
+    res.cookie("userID", cookieToken);
   }
   req.body.userID = cookieToken;
   next();

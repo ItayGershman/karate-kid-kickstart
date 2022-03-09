@@ -1,7 +1,7 @@
 import { TestKit } from "../TestKit";
 import { createMockTodo } from "../utils/utils";
 
-describe("Todos tests - POST", () => {
+describe("POST /todos", () => {
   const testKit = new TestKit();
   testKit.beforeAndAfter()
   afterEach(() => {

@@ -1,10 +1,6 @@
 import { Request, Response } from "express";
-export interface ITodo {
-  text: string;
-  isFinished: boolean;
-  id: string;
-  userID: string;
-}
+import { ITodo } from "../../common/interfaces/Todo";
+
 export interface ITodoDB {
   getTodos: (userID: string) => Promise<ITodo[]>;
   createTodo: (todo: ITodo) => Promise<ITodo>;
@@ -13,9 +9,8 @@ export interface ITodoDB {
 }
 
 export interface ITodoController {
-  db: any;
-  getTodos: (req: Request, res: Response) => Promise<void>;
-  createTodo(req: Request, res: Response): Promise<void>;
-  updateTodo(req: Request, res: Response): Promise<void>;
-  deleteTodo(req: Request, res: Response): Promise<void>;
+  getTodos: (req: Request, res: Response) => void;
+  createTodo(req: Request, res: Response): void;
+  updateTodo(req: Request, res: Response): void;
+  deleteTodo(req: Request, res: Response): void;
 }

@@ -1,21 +1,20 @@
 import { v4 as uuidv4 } from "uuid";
-
-function makeRandomString(length) {
-  let result = "";
-  const characters =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  const charactersLength = characters.length;
-  for (let i = 0; i < length; i++) {
-    result += characters.charAt(Math.floor(Math.random() * charactersLength));
-  }
-  return result;
-}
+import { Chance } from "chance";
 
 export const createMockTodo = (text) => {
   return {
     text,
     isFinished: false,
-    id: makeRandomString(8),
+    id: Chance().string(),
     userID: uuidv4(),
   };
 };
+
+export const addCookieToEndPoint = (id) =>
+  id && {
+    headers: {
+      Cookie: `userID=${id};`,
+    },
+  };
+
+

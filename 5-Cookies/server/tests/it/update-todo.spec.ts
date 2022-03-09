@@ -1,7 +1,8 @@
+import { errorMessages } from "../../../common/errorMessages";
 import { TestKit } from "../TestKit";
 import { createMockTodo } from "../utils/utils";
 
-describe("Todos tests - PUT endpoint", () => {
+describe("PUT /todos", () => {
   const testKit = new TestKit();
   testKit.beforeAndAfter()
   it("Update a todo without id - should get 400 error", async () => {
@@ -11,6 +12,7 @@ describe("Todos tests - PUT endpoint", () => {
       await appDriver.editTodo({ ...newTodo, text: "Upadte todo" }, "12");
     } catch (error) {
       expect(error.response.status).toBe(400);
+      expect(error.response.data).toBe(errorMessages.statusCode400.updateItemMsg)
     }
   });
   it("update a todo", async () => {

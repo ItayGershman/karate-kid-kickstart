@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 const { TodoController } = require("../controller/todoController");
 
-export const todoRouter = (db: any) => {
+export const todosRouter = (db: any) => {
   const router = express.Router();
   const todoController = new TodoController(db);
 

@@ -1,22 +1,18 @@
 import { Request, Response } from "express";
-import { ITodo, ITodoController, ITodoDB } from "../interfaces/todoInterface";
+import { ITodoController, ITodoDB } from "../interfaces/todoInterface";
+import { ITodo } from "../../common/interfaces/Todo";
+import { errorMessages } from "../../common/errorMessages";
 
 export class TodoController implements ITodoController {
-  db: ITodoDB;
-  constructor(db:  ITodoDB) {
-    this.db = db;
-  }
-  async getTodos(req: Request, res: Response): Promise<void> {
-    try {
-      const userID:string = req.body.userID;
-      const todos = await this.db.getTodos(userID);
+  constructor(private db: ITodoDB) {}
+  getTodos(req: Request, res: Response): void {
+    const userID: string = req.body.userID;
+    this.db.getTodos(userID).then((todos: ITodo[]) => {
       res.status(200).json(todos);
-    } catch (error) {
-      res.status(500).send(error);
-    }
+    });
   }
 
-  async createTodo(req: Request, res: Response): Promise<void> {
+  createTodo(req: Request, res: Response): void {
     const userID: string = req.body.userID;
     const todo: ITodo = {
       text: req.body.text,
@@ -24,38 +20,25 @@ export class TodoController implements ITodoController {
       id: req.body.id,
       userID,
     };
-    this.db
-      .createTodo(todo)
-      .then((todo) => {
-        res.status(200).json(todo);
-      })
-      .catch((err) => res.status(500).send(`${err}`));
+    this.db.createTodo(todo).then((todo) => {
+      res.status(200).json(todo);
+    });
   }
-  async updateTodo(req: Request, res: Response): Promise<void> {
-    const { text, isFinished }:{text:string,isFinished:boolean} = req.body.data;
+  updateTodo(req: Request, res: Response): void {
+    const { text, isFinished }: { text: string; isFinished: boolean } =
+      req.body.data;
     this.db
       .updateTodo({ text, isFinished }, req.params.id, { new: true })
       .then((doc) => {
-        if (!doc) res.status(400).send("Error");
+        if (!doc)
+          res.status(400).send(errorMessages.statusCode400.updateItemMsg);
         else res.status(200).send(doc);
-      })
-      .catch((e) => {
-        res.status(500).send(e);
       });
   }
-  async deleteTodo(req: Request, res: Response): Promise<void> {
-    try {
-      this.db
-        .removeTodo(req.params.id)
-        .then((doc) => {
-          if (!doc) res.status(400).send("Error");
-          else res.status(200).send(doc);
-        })
-        .catch((e) => {
-          res.status(500).send(e);
-        });
-    } catch (err) {
-      res.status(500).send(err);
-    }
+  deleteTodo(req: Request, res: Response): void {
+    this.db.removeTodo(req.params.id).then((doc) => {
+      if (!doc) res.status(400).send(errorMessages.statusCode400.deleteItemMsg);
+      else res.status(200).send(doc);
+    });
   }
 }

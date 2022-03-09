@@ -1,14 +1,11 @@
 import { errorHandler } from "../utils/errorHandler";
 import { MongoDB } from "../utils/MongoDB";
-
-require("dotenv").config("karate-kid-kickstart/5-Cookies/server/.env");
-const mongoose = require("mongoose");
+import dotenv from "dotenv";
+dotenv.config();
+import mongoose from "mongoose"
+// const mongoose = require("mongoose");
 
 export class MongoDBService extends MongoDB {
-  connection;
-  constructor() {
-    super();
-  }
   async connect() {
     try {
       const url: string = `${process.env.DB_HOST}`;
@@ -16,16 +13,15 @@ export class MongoDBService extends MongoDB {
         useNewUrlParser: true,
         useUnifiedTopology: true,
       };
-      this.connection = mongoose
+      mongoose
         .connect(url, options)
-        .then(() => console.log(`connected`))
         .catch((err) => console.error(`connection error: ${err}`));
     } catch (error) {
-      errorHandler(error)
+      errorHandler(error);
     }
   }
-  async disconnect() {
-    await mongoose.connection.close();
+  disconnect() {
+    return mongoose.connection.close();
   }
   async emptyDB() {
     const collections = mongoose.connection.collections;

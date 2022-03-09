@@ -1,14 +1,11 @@
-import { myApp } from "../app";
-import { AppDriver } from "./env/drivers/appDriver";
 import http from "http";
 import { MongoDriver } from "./env/drivers/mongoDBDriver";
-import mongoose from "mongoose";
-
+import { myApp } from "../app";
+import { AppDriver } from "./env/drivers/appDriver";
 export class TestKit {
   private server: http.Server;
   public appDriver: AppDriver;
   private mongoDBDriver: MongoDriver;
-  constructor() {}
   async setup() {
     const port = Math.ceil(Math.random() * 10000 + 1000);
     this.appDriver = new AppDriver(`http://localhost:${port}`);
