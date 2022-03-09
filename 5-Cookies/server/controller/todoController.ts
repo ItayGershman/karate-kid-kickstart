@@ -13,20 +13,13 @@ export class TodoController implements ITodoController {
   }
 
   createTodo(req: Request, res: Response): void {
-    const userID: string = req.body.userID;
-    const todo: ITodo = {
-      text: req.body.text,
-      isFinished: req.body.isFinished,
-      id: req.body.id,
-      userID,
-    };
+    const todo: ITodo = req.body;
     this.db.createTodo(todo).then((todo) => {
       res.status(200).json(todo);
     });
   }
   updateTodo(req: Request, res: Response): void {
-    const { text, isFinished }: { text: string; isFinished: boolean } =
-      req.body.data;
+    const { text, isFinished }: Partial<ITodo> = req.body.data;
     this.db
       .updateTodo({ text, isFinished }, req.params.id, { new: true })
       .then((doc) => {

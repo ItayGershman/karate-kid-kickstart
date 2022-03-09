@@ -15,7 +15,7 @@ describe("PUT /todos", () => {
       expect(error.response.data).toBe(errorMessages.statusCode400.updateItemMsg)
     }
   });
-  it("update a todo", async () => {
+  it("update a todo by chaning its title", async () => {
     const { appDriver, mongoDBDriver } = testKit.drivers();
     const newTodo = createMockTodo("create a todo");
     appDriver.setUserCookie(newTodo.userID);

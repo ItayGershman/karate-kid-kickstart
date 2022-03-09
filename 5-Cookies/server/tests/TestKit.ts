@@ -9,11 +9,9 @@ export class TestKit {
   async setup() {
     const port = Math.ceil(Math.random() * 10000 + 1000);
     this.appDriver = new AppDriver(`http://localhost:${port}`);
-
     this.mongoDBDriver = new MongoDriver();
 
     const app = myApp(this.mongoDBDriver, port);
-
     this.server = app.start();
     await this.mongoDBDriver.setup();
   }

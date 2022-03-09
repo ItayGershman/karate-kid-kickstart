@@ -5,7 +5,7 @@ import { errorHandler } from "./errorHandler";
 
 export class MongoDB implements ITodoDB {
   constructor() {}
-  getTodos = async (userID) => {
+  getTodos = async (userID:string) => {
     try {
       return await TodoModel.find({ userID: userID });
     } catch (error) {

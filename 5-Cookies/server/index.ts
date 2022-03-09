@@ -1,6 +1,6 @@
 import { MongoDBService } from "./services/MongoDBSerivce";
 
-const {myApp} = require("./app");
+const { myApp } = require("./app");
 const db = new MongoDBService();
 db.connect();
-myApp(db,3000).start();
+myApp(db, process.env.PORT || 3000).start();

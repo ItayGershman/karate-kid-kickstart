@@ -12,24 +12,30 @@ export class AppDriver {
     this.userID = undefined;
   }
 
+  private todosURL = (id: string = "") => {
+    return `${this.url}/todos/${id}`;
+  };
+
   async getTodos() {
-    return axios.get(`${this.url}/todos`, addCookieToEndPoint(this.userID));
+    return axios.get(this.todosURL(), addCookieToEndPoint(this.userID));
   }
   createTodo(newTodo) {
     return axios.post(
-      `${this.url}/todos`,
+      this.todosURL(),
       newTodo,
       addCookieToEndPoint(this.userID)
     );
   }
 
   editTodo(newTodo, id) {
-    const url = `${this.url}/todos/${id || ""}`;
-    return axios.put(url, { data: newTodo }, addCookieToEndPoint(this.userID));
+    return axios.put(
+      this.todosURL(id),
+      { data: newTodo },
+      addCookieToEndPoint(this.userID)
+    );
   }
 
   removeTodo(id) {
-    const url = `${this.url}/todos/${id || ""}`;
-    return axios.delete(url, addCookieToEndPoint(this.userID));
+    return axios.delete(this.todosURL(id), addCookieToEndPoint(this.userID));
   }
 }

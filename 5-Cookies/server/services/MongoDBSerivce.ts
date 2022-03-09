@@ -1,9 +1,9 @@
+import dotenv from "dotenv";
+import mongoose from "mongoose";
 import { errorHandler } from "../utils/errorHandler";
 import { MongoDB } from "../utils/MongoDB";
-import dotenv from "dotenv";
+
 dotenv.config();
-import mongoose from "mongoose"
-// const mongoose = require("mongoose");
 
 export class MongoDBService extends MongoDB {
   async connect() {

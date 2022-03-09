@@ -19,7 +19,7 @@ describe("DELETE /todos", () => {
     }
   });
 
-  it("Delete a todo", async () => {
+  it("Delete a todo - should work smoothly and return empty array of todos", async () => {
     const { appDriver, mongoDBDriver } = testKit.drivers();
     const newTodo = createMockTodo("test1");
     appDriver.setUserCookie(newTodo.userID);
