@@ -23,7 +23,7 @@ const TodoListItem = ({ item }: TodoListItem) => {
       //TodoAPI.editTodo(item,item.id)
     }
   };
-  console.log(todoItem);
+  
   return (
     <li id={item.id}>
       <Switch cb={toggleTodo} checked={todoItem.isFinished}/>

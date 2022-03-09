@@ -9,6 +9,10 @@
     --torquoise: #83eaf1;
     --font-family: "Helvetica Neue", Helvetica, Arial;
   }
+
+  button {
+    cursor:pointer;
+  }
   
   body {
     height: 100vh;

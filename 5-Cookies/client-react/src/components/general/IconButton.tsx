@@ -10,7 +10,7 @@ const IconButton = ({
   className: string;
 }) => {
   return (
-    <button className={className} style={{ cursor: "pointer" }} onClick={cb}>
+    <button className={className} onClick={cb}>
       <i className={icon} />
     </button>
   );
