@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 import { ITodo } from "../../common/interfaces/Todo";
 import { ITodoDB } from "../interfaces/todoInterface";
-const { TodoController } = require("../controller/todoController");
+import { TodoController } from "../controller/todoController";
 
 export const todosRouter = (db: ITodoDB) => {
   const router = express.Router();

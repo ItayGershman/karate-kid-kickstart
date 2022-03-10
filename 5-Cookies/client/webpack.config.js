@@ -1,6 +1,6 @@
-const path = require("path");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
-const CopyPlugin = require("copy-webpack-plugin");
+import path from "path";
+import HtmlWebpackPlugin from "html-webpack-plugin";
+import CopyPlugin from "copy-webpack-plugin";
 
 module.exports = {
   mode: "production",
@@ -18,11 +18,11 @@ module.exports = {
     open: true,
     hot: true,
     proxy: {
-      '/todos': {
-        target: 'http://localhost:3000',
-        secure: false
-      }
-    }
+      "/todos": {
+        target: "http://localhost:3000",
+        secure: false,
+      },
+    },
   },
   externals: {
     jss: "jss",
