@@ -1,16 +1,11 @@
-import { ITodo } from "../../common/interfaces/Todo";
+import { ITodo, UserID } from "../../common/interfaces/Todo";
 import { ITodoDB } from "../interfaces/todoInterface";
 import TodoModel from "../models/Todo";
-import { errorHandler } from "./errorHandler";
 
 export class MongoDB implements ITodoDB {
   constructor() {}
-  getTodos = async (userID:string) => {
-    try {
-      return await TodoModel.find({ userID: userID });
-    } catch (error) {
-      errorHandler(error);
-    }
+  getTodos = async (userID: UserID) => {
+    return await TodoModel.find({ userID: userID });
   };
   createTodo = (todo: ITodo) => {
     const res = new TodoModel(todo).save();

@@ -1,11 +1,12 @@
 import axios from "axios";
+import { Guid, ITodo, UserID } from "../../../../common/interfaces/Todo";
 import { addCookieToEndPoint } from "../../utils/utils";
 
 export class AppDriver {
-  userID: string;
+  userID: UserID;
   constructor(private url: string) {}
 
-  setUserCookie(userID: string) {
+  setUserCookie(userID: UserID) {
     this.userID = userID;
   }
   clearUserCookie() {
@@ -19,7 +20,7 @@ export class AppDriver {
   async getTodos() {
     return axios.get(this.todosURL(), addCookieToEndPoint(this.userID));
   }
-  createTodo(newTodo) {
+  createTodo(newTodo:ITodo) {
     return axios.post(
       this.todosURL(),
       newTodo,
@@ -27,7 +28,7 @@ export class AppDriver {
     );
   }
 
-  editTodo(newTodo, id) {
+  editTodo(newTodo:ITodo, id:Guid) {
     return axios.put(
       this.todosURL(id),
       { data: newTodo },
@@ -35,7 +36,7 @@ export class AppDriver {
     );
   }
 
-  removeTodo(id) {
+  removeTodo(id:Guid) {
     return axios.delete(this.todosURL(id), addCookieToEndPoint(this.userID));
   }
 }

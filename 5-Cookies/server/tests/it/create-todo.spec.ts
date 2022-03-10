@@ -12,6 +12,7 @@ describe("POST /todos", () => {
     const { appDriver, mongoDBDriver } = testKit.drivers();
     const newTodo1 = createMockTodo("test1");
     appDriver.setUserCookie(newTodo1.userID);
+
     const res = await appDriver.createTodo(newTodo1);
     expect(res.status).toBe(200);
 
@@ -20,7 +21,7 @@ describe("POST /todos", () => {
     expect(todos.length).toBe(1);
   });
 
-  it("create new todo with cookie appended to only one new todo", async () => {
+  it("should only return the user's todos", async () => {
     const { appDriver, mongoDBDriver } = testKit.drivers();
     const newTodo1 = createMockTodo("test1");
     const newTodo2 = createMockTodo("test2");
@@ -28,8 +29,8 @@ describe("POST /todos", () => {
     await appDriver.createTodo(newTodo1);
     appDriver.setUserCookie(newTodo2.userID);
     await appDriver.createTodo(newTodo2);
-    const todos = await mongoDBDriver.getTodos(newTodo2.userID);
 
+    const todos = await mongoDBDriver.getTodos(newTodo2.userID);
     expect(todos[0].text).toBe("test2");
     expect(todos.length).toBe(1);
   });

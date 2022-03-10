@@ -1,37 +1,41 @@
 import { Request, Response } from "express";
 import { ITodoController, ITodoDB } from "../interfaces/todoInterface";
-import { ITodo } from "../../common/interfaces/Todo";
+import { ITodo, UserID } from "../../common/interfaces/Todo";
 import { errorMessages } from "../../common/errorMessages";
 
 export class TodoController implements ITodoController {
   constructor(private db: ITodoDB) {}
-  getTodos(req: Request, res: Response): void {
-    const userID: string = req.body.userID;
+  getTodos(req: Request, res: Response<ITodo[]>): void {
+    const userID: UserID = req.cookies.userID;
+    console.log(userID);
     this.db.getTodos(userID).then((todos: ITodo[]) => {
       res.status(200).json(todos);
     });
   }
 
-  createTodo(req: Request, res: Response): void {
+  createTodo(req: Request, res: Response<ITodo>): void {
     const todo: ITodo = req.body;
-    this.db.createTodo(todo).then((todo) => {
-      res.status(200).json(todo);
+    this.db.createTodo({ ...todo, userID: req.cookies.userID }).then((todo) => {
+      return res.status(200).json(todo);
     });
   }
-  updateTodo(req: Request, res: Response): void {
+  updateTodo(req: Request, res: Response<ITodo | string>): void {
     const { text, isFinished }: Partial<ITodo> = req.body.data;
     this.db
       .updateTodo({ text, isFinished }, req.params.id, { new: true })
       .then((doc) => {
         if (!doc)
-          res.status(400).send(errorMessages.statusCode400.updateItemMsg);
-        else res.status(200).send(doc);
+          return res
+            .status(400)
+            .send(errorMessages.statusCode400.updateItemMsg);
+        return res.status(200).send(doc);
       });
   }
-  deleteTodo(req: Request, res: Response): void {
+  deleteTodo(req: Request, res: Response<ITodo | string>): void {
     this.db.removeTodo(req.params.id).then((doc) => {
-      if (!doc) res.status(400).send(errorMessages.statusCode400.deleteItemMsg);
-      else res.status(200).send(doc);
+      if (!doc)
+        return res.status(400).send(errorMessages.statusCode400.deleteItemMsg);
+      return res.status(200).send(doc);
     });
   }
 }

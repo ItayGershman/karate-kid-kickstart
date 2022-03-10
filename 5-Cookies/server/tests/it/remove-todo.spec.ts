@@ -1,21 +1,25 @@
 import { errorMessages } from "../../../common/errorMessages";
 import { TestKit } from "../TestKit";
-import { createMockTodo } from "../utils/utils";
+import { createMockTodo, generateID } from "../utils/utils";
 
 describe("DELETE /todos", () => {
   const testKit = new TestKit();
-  testKit.beforeAndAfter()
+  testKit.beforeAndAfter();
   afterEach(() => {
     const { mongoDBDriver } = testKit.drivers();
     mongoDBDriver.emptyDB();
   });
   it("Delete todo with incorrect id", async () => {
     const { appDriver } = testKit.drivers();
+    const fakeID = generateID();
+
     try {
-      await appDriver.removeTodo("1");
+      await appDriver.removeTodo(fakeID);
     } catch (error) {
       expect(error.response.status).toBe(400);
-      expect(error.response.data).toBe(errorMessages.statusCode400.deleteItemMsg);
+      expect(error.response.data).toBe(
+        errorMessages.statusCode400.deleteItemMsg
+      );
     }
   });
 
@@ -24,11 +28,13 @@ describe("DELETE /todos", () => {
     const newTodo = createMockTodo("test1");
     appDriver.setUserCookie(newTodo.userID);
     await mongoDBDriver.createTodo(newTodo);
+    let todos = await mongoDBDriver.getTodos(newTodo.userID);
+    expect(todos.length).toBe(1);
 
     const res = await appDriver.removeTodo(newTodo.id);
     expect(res.status).toBe(200);
 
-    const todos = await mongoDBDriver.getTodos(newTodo.userID);
+    todos = await mongoDBDriver.getTodos(newTodo.userID);
     expect(todos.length).toBe(0);
   });
 });
