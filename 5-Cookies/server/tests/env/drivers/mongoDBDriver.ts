@@ -1,18 +1,24 @@
 import { MongoMemoryServer } from "mongodb-memory-server";
-
 import mongoose from "mongoose";
-import { errorHandler } from "../../../utils/errorHandler";
 import { MongoDB } from "../../../utils/MongoDB";
 
 export class MongoDriver extends MongoDB {
   mongoServer;
-  contstrucor() {}
+  connectionTries;
+  contstrucor() {
+    this.connectionTries = 0;
+  }
   async setup() {
     try {
       this.mongoServer = await MongoMemoryServer.create();
+      this.connectionTries++;
       await mongoose.connect(this.mongoServer.getUri());
     } catch (error) {
-      errorHandler(error)
+      if (this.connectionTries > 1) {
+        console.log("Exiting from thrown error", error);
+        process.exit(1);
+      }
+      setTimeout(() => this.setup(), 500);
     }
   }
   async teardown() {
