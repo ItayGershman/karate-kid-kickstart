@@ -9,6 +9,12 @@ module.exports = {
   output: {
     path: __dirname + '/dist/',
   },
+  devServer: {
+    static: "dist",
+    port: 5001,
+    open: true,
+    hot: true,
+  },
   module: {
     rules: [
       {

@@ -1,12 +1,26 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, ChangeEvent, KeyboardEvent } from "react";
 import { TodosAPI } from "../../API/TodosAPI";
 import { Item } from "../../interfaces/interfaces";
 import "../../../style.css";
 import TodoListItem from "./TodoListItem";
+import { initTodo } from "../../utils/utils";
+import AddItem from "./AddItem";
 
 const TodoList = () => {
   const [todos, setTodos] = useState<Item[]>([]);
-  
+  const [newTodo, setNewTodo] = useState<Item>(initTodo());
+
+  const addTodo = (e: KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      setTodos((prevState) => [...prevState, newTodo]);
+      setNewTodo(initTodo);
+    }
+  };
+
+  const removeTodo = (itemID: string) => {
+    setTodos((prevState) => prevState.filter((todo) => todo.id !== itemID));
+    //send TodoAPI.removeTodo
+  };
 
   useEffect(() => {
     // const url = "http://localhost:5001";
@@ -18,17 +32,17 @@ const TodoList = () => {
     setTodos(testTodos);
   }, []);
 
+
   return (
     <main>
       <div className="container">
         <div className="list">
-          <h2>What would you like to do?</h2>
-          <input type="text" className="add-todo" id="addTodo" />
+          <AddItem addTodo={addTodo} setNewTodo={setNewTodo} />
           <ul id="todoList" className="list-container">
             {todos.map((item) => (
-              <TodoListItem
-                item={item}
-              />
+              <div key={item.id}>
+                <TodoListItem item={item} removeTodo={removeTodo} />
+              </div>
             ))}
           </ul>
         </div>
