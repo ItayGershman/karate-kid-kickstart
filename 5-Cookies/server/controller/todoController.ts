@@ -7,7 +7,6 @@ export class TodoController implements ITodoController {
   constructor(private db: ITodoDB) {}
   getTodos(req: Request, res: Response<ITodo[]>): void {
     const userID: UserID = req.cookies.userID;
-    console.log(userID);
     this.db.getTodos(userID).then((todos: ITodo[]) => {
       res.status(200).json(todos);
     });
