@@ -5,33 +5,40 @@ import "../../../style.css";
 import TodoListItem from "./TodoListItem";
 import { initTodo } from "../../utils/utils";
 import AddItem from "./AddItem";
+import { todosApi } from "../../../App";
 
 const TodoList = () => {
   const [todos, setTodos] = useState<Item[]>([]);
   const [newTodo, setNewTodo] = useState<Item>(initTodo());
 
-  const addTodo = (e: KeyboardEvent<HTMLInputElement>) => {
+  const addTodo = async (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       setTodos((prevState) => [...prevState, newTodo]);
       setNewTodo(initTodo);
+      try {
+        await todosApi.addTodo(newTodo);
+      } catch (error) {
+        console.log(error);
+      }
     }
   };
 
-  const removeTodo = (itemID: string) => {
+  const removeTodo = async (itemID: string) => {
     setTodos((prevState) => prevState.filter((todo) => todo.id !== itemID));
-    //send TodoAPI.removeTodo
+    await todosApi.removeTodo(itemID);
   };
 
   useEffect(() => {
-    // const url = "http://localhost:5001";
-    // const api = new TodosAPI(url);
-    const testTodos = [
-      { text: "test1", isFinished: false, id: "1" },
-      { text: "test2", isFinished: true, id: "2" },
-    ];
-    setTodos(testTodos);
+    const fetchTodos = async () => {
+      try {
+        const { data } = await todosApi.getTodos();
+        setTodos(data);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchTodos();
   }, []);
-
 
   return (
     <main>

@@ -4,8 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "webpack serve --port 3000",
-    "build": "NODE_ENV=production webpack"
+    "build-prod": "NODE_ENV=production webpack",
+    "build-dev": "webpack",
+    "start": "webpack serve"
   },
   "author": "",
   "license": "ISC",

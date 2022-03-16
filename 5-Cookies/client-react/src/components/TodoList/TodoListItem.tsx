@@ -6,25 +6,36 @@ import Switch from "../general/Switch";
 import "../../../style.css";
 import EditTodoItem from "./EditTodoItem";
 import { Item } from "../../interfaces/interfaces";
-
+import { todosApi } from "../../../App";
 
 const TodoListItem: FC<ITodoItem> = ({ item, removeTodo }) => {
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
   const [todoItem, setTodoItem] = useState<Item>(item);
 
-  const toggleTodo = () => {
+  const toggleTodo = async () => {
     setTodoItem({ ...todoItem, isFinished: !todoItem.isFinished });
-    //send TodoAPI.editTodo also
+    try {
+      await todosApi.editTodo(
+        { ...item, isFinished: !todoItem.isFinished },
+        item.id
+      );
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const editTodo = () => {
     setIsEditMode((prevState) => !prevState);
   };
 
-  const editText = (newText: string) => {
+  const editText = async (newText: string) => {
     setTodoItem((prevState) => ({ ...prevState, text: newText }));
     setIsEditMode(false);
-    //TodoAPI.editTodo(item,item.id,todoItem)
+    try {
+      await todosApi.editTodo({ ...todoItem, text: newText }, item.id);
+    } catch (error) {
+      console.log(error)
+    }
   };
 
   return (
