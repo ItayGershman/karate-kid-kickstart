@@ -1,16 +1,13 @@
-import React from "react";
+import React, { FC } from "react";
 
-const IconButton = ({
-  cb,
-  icon,
-  className,
-}: {
+const IconButton: FC<{
   cb: () => void;
   icon: string;
   className: string;
-}) => {
+  dataHook: string;
+}> = ({ cb, icon, className, dataHook }) => {
   return (
-    <button className={className} onClick={cb}>
+    <button className={className} onClick={cb} data-hook={dataHook}>
       <i className={icon} />
     </button>
   );

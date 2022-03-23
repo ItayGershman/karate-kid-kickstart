@@ -1,12 +1,13 @@
 import React, { useState, FC } from "react";
-import { ITodoItem, TodoListItem } from "../../interfaces/interfaces";
-import { classes } from "../../js-styles/style";
-import IconButton from "../general/IconButton";
-import Switch from "../general/Switch";
+import { ITodoItem, TodoListItem } from "../../../interfaces/interfaces";
+import { classes } from "../../../js-styles/style";
+import IconButton from "../../general/IconButton";
+import Switch from "../../general/Switch";
+import EditTodoItem from "../EditTodoItem";
+import { Item } from "../../../interfaces/interfaces";
+import { todosApi } from "../../../../App";
+import dataHooks from "../../../dataHooks/dataHooks";
 import "../../../style.css";
-import EditTodoItem from "./EditTodoItem";
-import { Item } from "../../interfaces/interfaces";
-import { todosApi } from "../../../App";
 
 const TodoListItem: FC<ITodoItem> = ({ item, removeTodo }) => {
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
@@ -34,15 +35,23 @@ const TodoListItem: FC<ITodoItem> = ({ item, removeTodo }) => {
     try {
       await todosApi.editTodo({ ...todoItem, text: newText }, item.id);
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
   };
 
   return (
     <li id={item.id}>
-      <Switch cb={toggleTodo} checked={todoItem.isFinished} />
+      <Switch
+        cb={toggleTodo}
+        checked={todoItem.isFinished}
+        dataHook={dataHooks.todoToggleSwitch}
+      />
       {isEditMode ? (
-        <EditTodoItem item={todoItem} editText={editText} />
+        <EditTodoItem
+          item={todoItem}
+          editText={editText}
+          dataHook={dataHooks.editTodoItem}
+        />
       ) : (
         <span
           className={`${classes.todoText} ${
@@ -55,11 +64,13 @@ const TodoListItem: FC<ITodoItem> = ({ item, removeTodo }) => {
 
       <span className={classes.listItemActions}>
         <IconButton
+          dataHook={dataHooks.removeIconButton}
           cb={() => removeTodo(item.id)}
           icon="fa fa-trash"
           className={classes.button}
         />
         <IconButton
+          dataHook={dataHooks.editIconButton}
           cb={editTodo}
           icon="fa fa-pencil"
           className={classes.edit}

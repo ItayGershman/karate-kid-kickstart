@@ -1,16 +1,19 @@
-import React, { useState, FC, ChangeEvent, KeyboardEvent, useEffect } from "react";
+import React, { useState, FC, ChangeEvent, KeyboardEvent } from "react";
 import { classes } from "../../js-styles/style";
 import { editTodoSuffix } from "../../constants";
 import { Item } from "../../interfaces/interfaces";
 
-const EditTodoItem = ({ item, editText }: { item: Item; editText: any }) => {
+const EditTodoItem: FC<{
+  item: Item;
+  editText: (newText: string) => void;
+  dataHook: string;
+}> = ({ item, editText, dataHook }) => {
   const [todoValue, setTodoValue] = useState<string>(item.text);
-  useEffect(()=>{
-    console.log({todoValue});
-  },[])
+
   return (
     <>
       <input
+        data-hook={dataHook}
         type="text"
         id={`${item.id}${editTodoSuffix}`}
         className={`${classes.todoText} ${classes.editTodo}`}

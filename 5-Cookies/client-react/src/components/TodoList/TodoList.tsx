@@ -2,7 +2,7 @@ import React, { useState, useEffect, ChangeEvent, KeyboardEvent } from "react";
 import { TodosAPI } from "../../API/TodosAPI";
 import { Item } from "../../interfaces/interfaces";
 import "../../../style.css";
-import TodoListItem from "./TodoListItem";
+import TodoListItem from "./TodoListItem/TodoListItem";
 import { initTodo } from "../../utils/utils";
 import AddItem from "./AddItem";
 import { todosApi } from "../../../App";
