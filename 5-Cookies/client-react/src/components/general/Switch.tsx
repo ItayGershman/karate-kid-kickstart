@@ -6,8 +6,9 @@ const Switch: FC<{
   dataHook: string;
 }> = ({ cb, checked = false, dataHook }) => {
   return (
-    <label className="switch" data-hook={dataHook}>
+    <label className="switch">
       <input
+        data-hook={dataHook}
         type="checkbox"
         checked={checked}
         onClick={cb}

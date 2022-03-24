@@ -24,6 +24,7 @@ const TodoList = () => {
   };
 
   const removeTodo = async (itemID: string) => {
+    console.log(itemID)
     setTodos((prevState) => prevState.filter((todo) => todo.id !== itemID));
     await todosApi.removeTodo(itemID);
   };

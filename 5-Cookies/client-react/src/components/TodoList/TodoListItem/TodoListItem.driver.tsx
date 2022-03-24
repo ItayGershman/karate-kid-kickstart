@@ -1,32 +1,41 @@
 import React from "react";
-import {
-  render,
-  configure,
-  screen,
-  fireEvent,
-  waitFor,
-} from "@testing-library/react";
+import { render, fireEvent } from "@testing-library/react";
 import TodoListItem from "./TodoListItem";
-import { Item } from "../../../interfaces/interfaces";
 import { BaseDriver } from "../../../test/baseDriver";
 import dataHooks from "../../../dataHooks/dataHooks";
-
-export const mockTodo = () => {
-  return {
-    text: "todo",
-    id: "1",
-    isFinished: false,
-  };
-};
-configure({ testIdAttribute: "data-hook" });
-
-const throwErrorOnMissingWrapper = () => {
-  throw new Error("Component must be rendered before accessed!");
-};
+import { mockTodo, throwErrorOnMissingWrapper } from "../../../test/utils";
+import { Item } from "../../../interfaces/interfaces";
 
 export class TodoListItemDriver extends BaseDriver {
   private todoItem: Item = mockTodo();
   private removeTodo: jest.Mock = jest.fn();
+
+  private buttonClickHandler = (dataHook: string) => {
+    if (!this.wrapper) return throwErrorOnMissingWrapper();
+    const buttonElem = this.wrapper.getByTestId(dataHook);
+    fireEvent.click(buttonElem);
+    return buttonElem;
+  };
+
+  private getTodoText = () => {
+    return this.wrapper?.getByText(this.todoItem.text).innerHTML;
+  };
+
+  private getTodoStatus = () => {
+    const switchElem = this.wrapper?.getByTestId(
+      dataHooks.todoToggleSwitch
+    ) as HTMLInputElement;
+    return switchElem.checked;
+  };
+
+  private getEditModeStatus = () => {
+    if (!this.wrapper) return throwErrorOnMissingWrapper();
+    try {
+      if (this.wrapper.getByTestId(dataHooks.editTodoItem)) return true;
+    } catch (error) {
+      return false;
+    }
+  };
 
   given = {
     item: (item: Partial<Item>) => {
@@ -46,33 +55,13 @@ export class TodoListItemDriver extends BaseDriver {
       );
       return this.when;
     },
-    editButtonClick: async () => {
-      if (!this.wrapper) return throwErrorOnMissingWrapper();
-      const editButton = await this.wrapper.getByTestId(
-        dataHooks.editIconButton
-      );
-      fireEvent.click(editButton);
-      return editButton;
-    },
-    removeButtonClick: async () => {
-      if (!this.wrapper) return throwErrorOnMissingWrapper();
-      (await this.wrapper.findByTestId(dataHooks.removeIconButton)).click();
-      return this.when;
-    },
+    editButtonClick: () => this.buttonClickHandler(dataHooks.editIconButton),
+    removeButtonClick: () => this.buttonClickHandler(dataHooks.removeIconButton),
   };
 
   get = {
-    todoText: () => this.todoItem.text,
-    todoStatus: () => this.todoItem.isFinished,
-    editModeStatus: async () => {
-      if (!this.wrapper) return throwErrorOnMissingWrapper();
-      if (!this.wrapper) return throwErrorOnMissingWrapper();
-      try {
-        await this.wrapper.getByTestId(dataHooks.editTodoItem);
-        return true;
-      } catch (error) {
-        return false;
-      }
-    },
+    todoText: () => this.getTodoText(),
+    todoStatus: () => this.getTodoStatus(),
+    editModeStatus: () => this.getEditModeStatus(),
   };
 }

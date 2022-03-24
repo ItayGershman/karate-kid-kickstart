@@ -4,39 +4,37 @@ import { classes } from "../../../js-styles/style";
 import IconButton from "../../general/IconButton";
 import Switch from "../../general/Switch";
 import EditTodoItem from "../EditTodoItem";
-import { Item } from "../../../interfaces/interfaces";
 import { todosApi } from "../../../../App";
 import dataHooks from "../../../dataHooks/dataHooks";
-import "../../../style.css";
+import "../../../../style.css";
+import { Item } from "../../../interfaces/interfaces";
+import { Guid } from "../../../../../common/interfaces/Todo";
 
 const TodoListItem: FC<ITodoItem> = ({ item, removeTodo }) => {
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
   const [todoItem, setTodoItem] = useState<Item>(item);
 
-  const toggleTodo = async () => {
-    setTodoItem({ ...todoItem, isFinished: !todoItem.isFinished });
+  const dispatchEditTodo = async (newTodo: Item, id: Guid): Promise<void> => {
     try {
-      await todosApi.editTodo(
-        { ...item, isFinished: !todoItem.isFinished },
-        item.id
-      );
+      await todosApi.editTodo(newTodo, id);
     } catch (error) {
       console.log(error);
     }
   };
 
-  const editTodo = () => {
+  const toggleTodo = async (): Promise<void> => {
+    setTodoItem({ ...todoItem, isFinished: !todoItem.isFinished });
+    dispatchEditTodo({ ...item, isFinished: !todoItem.isFinished }, item.id);
+  };
+
+  const editTodo = (): void => {
     setIsEditMode((prevState) => !prevState);
   };
 
-  const editText = async (newText: string) => {
+  const editText = async (newText: string): Promise<void> => {
     setTodoItem((prevState) => ({ ...prevState, text: newText }));
     setIsEditMode(false);
-    try {
-      await todosApi.editTodo({ ...todoItem, text: newText }, item.id);
-    } catch (error) {
-      console.log(error);
-    }
+    dispatchEditTodo({ ...todoItem, text: newText }, item.id);
   };
 
   return (
@@ -65,7 +63,9 @@ const TodoListItem: FC<ITodoItem> = ({ item, removeTodo }) => {
       <span className={classes.listItemActions}>
         <IconButton
           dataHook={dataHooks.removeIconButton}
-          cb={() => removeTodo(item.id)}
+          cb={() => {
+            removeTodo(item.id);
+          }}
           icon="fa fa-trash"
           className={classes.button}
         />

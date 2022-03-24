@@ -19,3 +19,5 @@ export interface IAddItem {
   addTodo:(e: KeyboardEvent<HTMLInputElement>) => void;
   setNewTodo:React.Dispatch<React.SetStateAction<Item>>
 }
+
+export interface Guid {}
