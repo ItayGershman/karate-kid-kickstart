@@ -1,53 +1,84 @@
-import { mockTodo } from "../../../test/utils";
+import { buildTodoItem } from "../../../test/utils";
 import { TodoListItemDriver } from "./TodoListItem.driver";
+import { waitFor } from "@testing-library/react";
+import { Chance } from "chance";
 
 describe("todo list item component", () => {
-  let driver : TodoListItemDriver;
+  let driver: TodoListItemDriver;
+  const chance = new Chance();
 
   beforeEach(() => {
     driver = new TodoListItemDriver();
   });
 
   test("should display description text", async () => {
-    const item = { text: "test" };
-    driver.given.item(item);
-
-    driver.when.render();
+    const item = buildTodoItem();
+    driver.given.item(item).when.render();
 
     expect(driver.get.todoText()).toEqual(item.text);
   });
 
-
-  test("should display switchMode status", async () => {
-    driver.when.render();
+  test("should verify that a new item status is unfinished by default", async () => {
+    const item = buildTodoItem();
+    driver.given.item(item).when.render();
 
     expect(driver.get.todoStatus()).toEqual(false);
   });
 
+  // test("should verify that a new item is un finished yet", async () => {
+  //   const item = { text: chance.sentence()};
+  //   driver.given.item(item).when.render()
+
+  //   expect(driver.get.todoStatus()).toEqual(true);
+  // });
 
   test("should display editMode status", async () => {
     driver.when.render();
-    
-    expect(driver.get.editModeStatus()).toBeFalsy();
+
+    expect(driver.get.editModeStatus()).toEqual(false);
   });
 
+  test("should change todo text field to input field", async () => {
+    driver.when.render().when.clickOnEditButton();
 
-  test("should change editMode status to true", async () => {
-    driver.when.render(); 
-    driver.when.editButtonClick();
-
-    expect(driver.get.editModeStatus()).toBeTruthy();
+    expect(driver.get.editModeStatus()).toEqual(true);
   });
 
+  test("should change todo text", async () => {
+    const randomTodo = chance.sentence();
 
-  test("should remove todo item from screen", () => {
+    driver.when.render().when.clickOnEditButton();
+    driver.when.setInputText(randomTodo);
+    driver.when.pressEnter();
+
+    waitFor(() => expect(driver.get.todoText()).toBe(randomTodo));
+  });
+
+  test("should remove an item when clicking the trash button", () => {
     const removeTodo: jest.Mock = jest.fn();
-    const item = mockTodo();
-    driver.given.item(item).removeTodo(removeTodo);
-
-    driver.when.render();
-    driver.when.removeButtonClick()
-
+    const item = buildTodoItem();
+    driver.given
+      .item(item)
+      .given.removeTodo(removeTodo)
+      .when.render()
+      .when.clickOnRemoveButton();
+    console.log("After click on remove button")
     expect(removeTodo).toHaveBeenCalledWith(item.id);
+    // expect(driver.get.isItemOnScreen()).toEqual(false);
   });
+
+  // test("should remove todo item from screen", () => {
+  //   const removeTodo: jest.Mock = jest.fn();
+  //   const item = buildTodoItem();
+  //   driver.given.item(item).given.removeTodo(removeTodo);
+  //   driver.given
+  //     .item(item)
+  //     .given.removeTodo(removeTodo)
+  //     .when.render()
+  //     .when.clickOnRemoveButton();
+
+  //   expect(driver.get.isItemOnScreen()).toEqual(false);
+  // });
 });
+
+

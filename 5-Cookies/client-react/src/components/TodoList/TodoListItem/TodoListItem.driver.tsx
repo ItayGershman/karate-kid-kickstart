@@ -1,67 +1,108 @@
 import React from "react";
-import { render, fireEvent } from "@testing-library/react";
+import { render, fireEvent, RenderResult } from "@testing-library/react";
 import TodoListItem from "./TodoListItem";
-import { BaseDriver } from "../../../test/baseDriver";
 import dataHooks from "../../../dataHooks/dataHooks";
-import { mockTodo, throwErrorOnMissingWrapper } from "../../../test/utils";
-import { Item } from "../../../interfaces/interfaces";
+import {
+  buildTodoItem,
+  errorOnMissingWrapper,
+  isElementExist,
+} from "../../../test/utils";
+import { DataHook, Item } from "../../../interfaces/interfaces";
 
-export class TodoListItemDriver extends BaseDriver {
-  private todoItem: Item = mockTodo();
-  private removeTodo: jest.Mock = jest.fn();
+export class TodoListItemDriver {
+  private todoItem: Item = buildTodoItem();
+  private removeTodoMock: jest.Mock = jest.fn();
+  private dispatchEditTodo: jest.Mock = jest.fn();
+  private wrapper?: RenderResult;
+
+  private getElementByHookName = (hook: DataHook) => {
+    if (!this.wrapper) throw errorOnMissingWrapper();
+    return this.wrapper.getByTestId(hook);
+  };
 
   private buttonClickHandler = (dataHook: string) => {
-    if (!this.wrapper) return throwErrorOnMissingWrapper();
-    const buttonElem = this.wrapper.getByTestId(dataHook);
-    fireEvent.click(buttonElem);
-    return buttonElem;
+    const buttonElem = this.getElementByHookName(dataHook);
+    if (buttonElem !== null) fireEvent.click(buttonElem);
   };
 
   private getTodoText = () => {
-    return this.wrapper?.getByText(this.todoItem.text).innerHTML;
+    return this.getElementByHookName(dataHooks.todoText).innerHTML;
   };
 
-  private getTodoStatus = () => {
-    const switchElem = this.wrapper?.getByTestId(
+  private getTodoStatus = (): boolean => {
+    const switchElem = this.getElementByHookName(
       dataHooks.todoToggleSwitch
     ) as HTMLInputElement;
     return switchElem.checked;
   };
 
-  private getEditModeStatus = () => {
-    if (!this.wrapper) return throwErrorOnMissingWrapper();
-    try {
-      if (this.wrapper.getByTestId(dataHooks.editTodoItem)) return true;
-    } catch (error) {
-      return false;
-    }
+  private getEditModeStatus = (): boolean => {
+    if (!this.wrapper) throw errorOnMissingWrapper();
+    return isElementExist(this.wrapper, dataHooks.editTodoItem);
+  };
+
+  private getTodoItemFromScreen = (): boolean => {
+    if (!this.wrapper) throw errorOnMissingWrapper();
+    return isElementExist(this.wrapper, dataHooks.todoItem);
   };
 
   given = {
     item: (item: Partial<Item>) => {
       this.todoItem = { ...this.todoItem, ...item };
-      return this.given;
+      return this;
     },
     removeTodo: (cb: jest.Mock) => {
-      this.removeTodo = cb;
-      return this.given;
+      this.removeTodoMock = cb;
+      return this;
     },
   };
 
   when = {
     render: () => {
       this.wrapper = render(
-        <TodoListItem item={this.todoItem} removeTodo={this.removeTodo} />
+        <TodoListItem
+          item={this.todoItem}
+          removeTodo={this.removeTodoMock}
+          dispatchEditTodo={this.dispatchEditTodo}
+        />
       );
-      return this.when;
+      return this;
     },
-    editButtonClick: () => this.buttonClickHandler(dataHooks.editIconButton),
-    removeButtonClick: () => this.buttonClickHandler(dataHooks.removeIconButton),
+    clickOnEditButton: () => {
+      this.buttonClickHandler(dataHooks.editIconButton);
+      return this;
+    },
+    clickOnRemoveButton: () => {
+      this.buttonClickHandler(dataHooks.removeIconButton);
+      return this;
+    },
+    clickOnToggleButton: () => {
+      this.buttonClickHandler(dataHooks.todoToggleSwitch);
+      return this;
+    },
+    setInputText: (text: string) => {
+      const textInput = this.getElementByHookName(dataHooks.editTodoItem);
+      if (textInput !== null) {
+        fireEvent.change(textInput, { target: { value: text } });
+      }
+      return this;
+    },
+    pressEnter: () => {
+      const textInput = this.getElementByHookName(dataHooks.editTodoItem);
+      if (textInput) {
+        fireEvent.keyPress(textInput, {
+          key: "Enter",
+          code: "Enter",
+          charCode: 13,
+        });
+      }
+    },
   };
 
   get = {
     todoText: () => this.getTodoText(),
     todoStatus: () => this.getTodoStatus(),
     editModeStatus: () => this.getEditModeStatus(),
+    isItemOnScreen: () => this.getTodoItemFromScreen(),
   };
 }

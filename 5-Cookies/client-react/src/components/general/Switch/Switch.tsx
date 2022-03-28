@@ -1,9 +1,10 @@
 import React, { FC } from "react";
+import { DataHook } from "../../../interfaces/interfaces";
 
 const Switch: FC<{
   cb: () => void;
   checked: boolean;
-  dataHook: string;
+  dataHook: DataHook;
 }> = ({ cb, checked = false, dataHook }) => {
   return (
     <label className="switch">

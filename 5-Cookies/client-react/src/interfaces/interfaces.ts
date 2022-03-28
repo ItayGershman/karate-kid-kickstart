@@ -1,4 +1,5 @@
 import { KeyboardEvent } from "react";
+import { Guid } from "../../../common/interfaces/Todo";
 
 export type Item = {
   text: string;
@@ -13,6 +14,7 @@ export interface TodoListItem {
 export interface ITodoItem {
   item: Item;
   removeTodo: (itemID: string) => void;
+  dispatchEditTodo: (newTodo: Item, id: Guid, displayToaster?: boolean) => Promise<void>
 }
 
 export interface IAddItem {
@@ -20,4 +22,4 @@ export interface IAddItem {
   setNewTodo:React.Dispatch<React.SetStateAction<Item>>
 }
 
-export interface Guid {}
+export type DataHook = string

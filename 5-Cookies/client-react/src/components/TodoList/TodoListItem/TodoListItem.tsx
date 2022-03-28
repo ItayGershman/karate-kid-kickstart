@@ -1,30 +1,29 @@
 import React, { useState, FC } from "react";
+import classNames from "classnames";
 import { ITodoItem, TodoListItem } from "../../../interfaces/interfaces";
-import { classes } from "../../../js-styles/style";
-import IconButton from "../../general/IconButton";
-import Switch from "../../general/Switch";
-import EditTodoItem from "../EditTodoItem";
-import { todosApi } from "../../../../App";
+import IconButton from "../../general/IconButton/IconButton";
+import Switch from "../../general/Switch/Switch";
+import EditTodoItem from "../EditTodoItem/EditTodoItem";
 import dataHooks from "../../../dataHooks/dataHooks";
-import "../../../../style.css";
 import { Item } from "../../../interfaces/interfaces";
-import { Guid } from "../../../../../common/interfaces/Todo";
+import { errorToaster } from "../../Toaster/toasterHandler";
+import "../../../../style.css";
+import { classes } from "../../../js-styles/style";
 
-const TodoListItem: FC<ITodoItem> = ({ item, removeTodo }) => {
+const TodoListItem: FC<ITodoItem> = ({ item, removeTodo,dispatchEditTodo }) => {
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
   const [todoItem, setTodoItem] = useState<Item>(item);
 
-  const dispatchEditTodo = async (newTodo: Item, id: Guid): Promise<void> => {
-    try {
-      await todosApi.editTodo(newTodo, id);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   const toggleTodo = async (): Promise<void> => {
-    setTodoItem({ ...todoItem, isFinished: !todoItem.isFinished });
-    dispatchEditTodo({ ...item, isFinished: !todoItem.isFinished }, item.id);
+    try {
+      await dispatchEditTodo(
+        { ...item, isFinished: !todoItem.isFinished },
+        item.id
+      );
+      setTodoItem({ ...todoItem, isFinished: !todoItem.isFinished });
+    } catch (error) {
+      errorToaster("Something went wrong");
+    }
   };
 
   const editTodo = (): void => {
@@ -32,13 +31,17 @@ const TodoListItem: FC<ITodoItem> = ({ item, removeTodo }) => {
   };
 
   const editText = async (newText: string): Promise<void> => {
-    setTodoItem((prevState) => ({ ...prevState, text: newText }));
-    setIsEditMode(false);
-    dispatchEditTodo({ ...todoItem, text: newText }, item.id);
+    try {
+      await dispatchEditTodo({ ...todoItem, text: newText }, item.id, true);
+      setTodoItem((prevState) => ({ ...prevState, text: newText }));
+      setIsEditMode(false);
+    } catch (error) {
+      errorToaster("Something went wrong");
+    }
   };
 
   return (
-    <li id={item.id}>
+    <li id={item.id} data-hook={dataHooks.todoItem}>
       <Switch
         cb={toggleTodo}
         checked={todoItem.isFinished}
@@ -52,9 +55,11 @@ const TodoListItem: FC<ITodoItem> = ({ item, removeTodo }) => {
         />
       ) : (
         <span
-          className={`${classes.todoText} ${
+          data-hook={dataHooks.todoText}
+          className={classNames(
+            classes.todoText,
             todoItem.isFinished ? classes.finishedTodo : classes.unfinishedTodo
-          }`}
+          )}
         >
           {todoItem.text}
         </span>

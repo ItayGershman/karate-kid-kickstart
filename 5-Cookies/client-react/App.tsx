@@ -1,16 +1,19 @@
-import React, { FC } from "react";
+import React, { FC,createContext } from "react";
 import { TodosAPI } from "./src/API/TodosAPI";
-import Header from "./src/components/Header";
+import Header from "./src/components/Header/Header";
+import Toaster from "./src/components/Toaster/Toaster";
 import TodoList from "./src/components/TodoList/TodoList";
 
-export const todosApi = new TodosAPI();
+const todosApi = new TodosAPI();
+export const TodosApiContext = React.createContext(todosApi);
 
 const App: FC = () => {
   return (
-    <>
+    <TodosApiContext.Provider value={todosApi}>
       <Header />
       <TodoList />
-    </>
+      <Toaster />
+    </TodosApiContext.Provider>
   );
 };
 
