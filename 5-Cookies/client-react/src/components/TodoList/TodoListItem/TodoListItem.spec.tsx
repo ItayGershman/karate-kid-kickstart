@@ -25,30 +25,19 @@ describe("todo list item component", () => {
     expect(driver.get.todoStatus()).toEqual(false);
   });
 
-  // test("should verify that a new item is un finished yet", async () => {
-  //   const item = { text: chance.sentence()};
-  //   driver.given.item(item).when.render()
-
-  //   expect(driver.get.todoStatus()).toEqual(true);
-  // });
-
-  test("should display editMode status", async () => {
-    driver.when.render();
-
-    expect(driver.get.editModeStatus()).toEqual(false);
-  });
-
   test("should change todo text field to input field", async () => {
     driver.when.render().when.clickOnEditButton();
 
     expect(driver.get.editModeStatus()).toEqual(true);
   });
 
-  test("should change todo text", async () => {
-    const randomTodo = chance.sentence();
+  test("should simulate user typing and verify text change after press on 'Enter'", async () => {
+    const randomTodo = chance.string();
 
     driver.when.render().when.clickOnEditButton();
-    driver.when.setInputText(randomTodo);
+    for (let i = 0; i < randomTodo.length; ++i) {
+      driver.when.setInputText(randomTodo[i]);
+    }
     driver.when.pressEnter();
 
     waitFor(() => expect(driver.get.todoText()).toBe(randomTodo));
@@ -62,23 +51,7 @@ describe("todo list item component", () => {
       .given.removeTodo(removeTodo)
       .when.render()
       .when.clickOnRemoveButton();
-    console.log("After click on remove button")
+
     expect(removeTodo).toHaveBeenCalledWith(item.id);
-    // expect(driver.get.isItemOnScreen()).toEqual(false);
   });
-
-  // test("should remove todo item from screen", () => {
-  //   const removeTodo: jest.Mock = jest.fn();
-  //   const item = buildTodoItem();
-  //   driver.given.item(item).given.removeTodo(removeTodo);
-  //   driver.given
-  //     .item(item)
-  //     .given.removeTodo(removeTodo)
-  //     .when.render()
-  //     .when.clickOnRemoveButton();
-
-  //   expect(driver.get.isItemOnScreen()).toEqual(false);
-  // });
 });
-
-

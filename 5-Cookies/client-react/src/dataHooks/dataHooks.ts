@@ -4,5 +4,6 @@ export default {
   todoToggleSwitch: "todo-toggle-switch",
   editTodoItem: "edit-todo-item",
   todoItem: "todo-item",
-  todoText:"todo-text"
+  todoText:"todo-text",
+  addItem:"add-item"
 };

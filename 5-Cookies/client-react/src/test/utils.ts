@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from "uuid";
-import { Item } from "../interfaces/interfaces";
+import { DataHook, Item } from "../interfaces/interfaces";
 import { Chance } from "chance";
-import { RenderResult } from "@testing-library/react";
+import { fireEvent, RenderResult } from "@testing-library/react";
 
 const chance = new Chance();
 
@@ -16,6 +16,21 @@ export const errorOnMissingWrapper = () => {
   return new Error("Component must be rendered before accessed!");
 };
 
-export const isElementExist = (wrapper: RenderResult, id: string) => {
-  return !!wrapper.queryByTestId(id);
+export const isElementExist = (wrapper: RenderResult, id: string) =>
+  !!wrapper.queryByTestId(id);
+
+export const getElementByHookName = (
+  container: RenderResult | undefined,
+  hook: DataHook
+) => {
+  if (!container) throw errorOnMissingWrapper();
+  return container.getByTestId(hook);
+};
+
+export const handleKeyPress = (elem: HTMLElement | HTMLInputElement) => {
+  fireEvent.keyPress(elem, {
+    key: "Enter",
+    code: "Enter",
+    charCode: 13,
+  });
 };

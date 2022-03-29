@@ -19,7 +19,8 @@ export interface ITodoItem {
 
 export interface IAddItem {
   addTodo:(e: KeyboardEvent<HTMLInputElement>) => void;
-  setNewTodo:React.Dispatch<React.SetStateAction<Item>>
+  setNewTodo:React.Dispatch<React.SetStateAction<Item>>;
+  dataHook:DataHook
 }
 
 export type DataHook = string

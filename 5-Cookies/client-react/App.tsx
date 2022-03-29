@@ -1,11 +1,12 @@
-import React, { FC,createContext } from "react";
-import { TodosAPI } from "./src/API/TodosAPI";
+import { render } from "@testing-library/react";
+import React, { FC, createContext } from "react";
+import { ITodoApi, TodosAPI } from "./src/API/TodosAPI";
 import Header from "./src/components/Header/Header";
 import Toaster from "./src/components/Toaster/Toaster";
 import TodoList from "./src/components/TodoList/TodoList";
 
-const todosApi = new TodosAPI();
-export const TodosApiContext = React.createContext(todosApi);
+const todosApi: ITodoApi = new TodosAPI();
+export const TodosApiContext = createContext<ITodoApi>(todosApi);
 
 const App: FC = () => {
   return (
