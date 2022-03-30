@@ -1,5 +1,5 @@
-import axios, { AxiosResponse } from "axios";
-import { Guid } from "../../../common/interfaces/Todo";
+import axios from "axios";
+import { TodoTypes } from "../../../common/index";
 import { Item, ITodoApi } from "../interfaces/interfaces";
 
 export class TodosAPI implements ITodoApi {
@@ -10,11 +10,11 @@ export class TodosAPI implements ITodoApi {
     return axios.post(`/todos`, newTodo);
   }
 
-  editTodo(newTodo: Item, id: Guid) {
+  editTodo(newTodo: Item, id: TodoTypes.Guid) {
     return axios.put(`/todos/${id}`, { data: newTodo });
   }
 
-  removeTodo(id: Guid) {
+  removeTodo(id: TodoTypes.Guid) {
     return axios.delete(`/todos/${id}`);
   }
 }

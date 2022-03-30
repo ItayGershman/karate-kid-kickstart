@@ -9,11 +9,11 @@ import { Item } from "../../interfaces/interfaces";
 import TodoListItem from "./TodoListItem/TodoListItem";
 import { initTodo } from "../../utils/utils";
 import AddItem from "./AddItem/AddItem";
-import { TodosApiContext } from "../../../App";
 import "../../../style.css";
 import { errorToaster, successToaster } from "../Toaster/toasterHandler";
-import { Guid } from "../../../../common/interfaces/Todo";
+import { TodoTypes } from "../../../../common/index";
 import dataHooks from "../../dataHooks/dataHooks";
+import { TodosApiContext } from "../../API/Contexts/TodoContext";
 
 const TodoList: FC = () => {
   const [todos, setTodos] = useState<Item[]>([]);
@@ -45,7 +45,7 @@ const TodoList: FC = () => {
 
   const dispatchEditTodo = async (
     newTodo: Item,
-    id: Guid,
+    id: TodoTypes.Guid,
     displayToaster: boolean = false
   ): Promise<void> => {
     try {

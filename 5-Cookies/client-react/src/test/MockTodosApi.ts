@@ -1,4 +1,4 @@
-import { Guid } from "../../../common/interfaces/Todo";
+import { TodoTypes } from "../../../common/index";
 import { Item, ITodoApi } from "../interfaces/interfaces";
 
 
@@ -35,7 +35,7 @@ export class MockTodosAPI implements MockTodoApi {
     return this.editTodoMockFN();
   }
 
-  removeTodo(id: Guid) {
+  removeTodo(id: TodoTypes.Guid) {
     return this.removeTodoMockFN();
   }
 }

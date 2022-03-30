@@ -1,6 +1,6 @@
 import { AxiosResponse } from "axios";
 import { KeyboardEvent } from "react";
-import { Guid } from "../../../common/interfaces/Todo";
+import { TodoTypes } from "../../../common/index";
 
 export type DataHook = string;
 
@@ -19,7 +19,7 @@ export interface ITodoItem {
   removeTodo: (itemID: string) => void;
   dispatchEditTodo: (
     newTodo: Item,
-    id: Guid,
+    id: TodoTypes.Guid,
     displayToaster?: boolean
   ) => Promise<void>;
 }
@@ -35,7 +35,9 @@ export interface ITodoApi {
   addTodo: (newTodo: Item) => Promise<AxiosResponse<any, any>> | Promise<any>;
   editTodo: (
     newTodo: Item,
-    id: Guid
+    id: TodoTypes.Guid
   ) => Promise<AxiosResponse<any, any>> | Promise<any>;
-  removeTodo: (id: Guid) => Promise<AxiosResponse<any, any>> | Promise<any>;
+  removeTodo: (
+    id: TodoTypes.Guid
+  ) => Promise<AxiosResponse<any, any>> | Promise<any>;
 }
