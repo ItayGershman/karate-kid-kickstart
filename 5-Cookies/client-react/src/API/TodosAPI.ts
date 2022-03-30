@@ -1,20 +1,6 @@
 import axios, { AxiosResponse } from "axios";
 import { Guid } from "../../../common/interfaces/Todo";
-import { Item } from "../interfaces/interfaces";
-
-export interface ITodoApi {
-  getTodos: () => Promise<AxiosResponse<any, any>> | Promise<any>;
-  addTodo: (
-    newTodo: Item
-  ) => Promise<AxiosResponse<any, any>> | Promise<any>;
-  editTodo: (
-    newTodo: Item,
-    id: Guid
-  ) => Promise<AxiosResponse<any, any>> | Promise<any>;
-  removeTodo: (
-    id: Guid
-  ) => Promise<AxiosResponse<any, any>> | Promise<any>;
-}
+import { Item, ITodoApi } from "../interfaces/interfaces";
 
 export class TodosAPI implements ITodoApi {
   getTodos() {

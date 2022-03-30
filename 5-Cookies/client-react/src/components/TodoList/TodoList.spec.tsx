@@ -11,7 +11,18 @@ describe("todo list item component", () => {
     driver = new TodoListDriver();
   });
 
-  test.only("should add a todo", async () => {
+  test("should render todos on load", async () => {
+    const todos = [buildTodoItem(), buildTodoItem()];
+    driver.given.InitialTodos(todos);
+
+    driver.when.render();
+
+    await waitFor(() => {
+      expect(driver.get.isTodosExist()).toEqual(true);
+    });
+  });
+
+  test("should add a todo", async () => {
     const firstTodo = chance.string();
     const secondTodo = chance.string();
     driver.when
@@ -25,4 +36,7 @@ describe("todo list item component", () => {
       expect(driver.get.isItemExist(firstTodo)).toEqual(true);
     });
   });
+
+  test.todo("should remove todo");
+  test.todo("should edit todo");
 });

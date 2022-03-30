@@ -1,28 +1,31 @@
-import { ITodoApi } from "../API/TodosAPI";
-import { Item } from "../interfaces/interfaces";
+import { Guid } from "../../../common/interfaces/Todo";
+import { Item, ITodoApi } from "../interfaces/interfaces";
 
-export class MockTodosAPI implements ITodoApi {
-  private todos: Item[] = [];
+
+export interface MockTodoApi extends ITodoApi {
+  getDefaultTodos: () => Item[],
+  setTodos: (todos:Item[])=>void
+}
+export class MockTodosAPI implements MockTodoApi {
   private getTodosMockFN: jest.Mock = jest.fn();
   private addTodoMockFN: jest.Mock = jest.fn();
   private editTodoMockFN: jest.Mock = jest.fn();
   private removeTodoMockFN: jest.Mock = jest.fn();
-  constructor(todos: Item[] = []) {
+  
+  constructor(private todos: Item[] = []) {
     this.todos = todos;
   }
 
-  private mockAsyncResponse = (value: object) => {
-    return this.getTodosMockFN().mockResolvedValue(value)();
-  };
+  getDefaultTodos = () =>{
+    return this.todos
+  }
 
   setTodos = (todos: Item[]) => {
     this.todos = [...this.todos, ...todos];
   };
 
   getTodos() {
-    return this.mockAsyncResponse({
-      data: this.todos,
-    });
+    return this.getTodosMockFN.mockResolvedValue({ data: this.todos })();
   }
   addTodo(newTodo: Item) {
     return this.addTodoMockFN();
@@ -32,7 +35,7 @@ export class MockTodosAPI implements ITodoApi {
     return this.editTodoMockFN();
   }
 
-  removeTodo(id: string) {
+  removeTodo(id: Guid) {
     return this.removeTodoMockFN();
   }
 }

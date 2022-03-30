@@ -21,7 +21,6 @@ const TodoList: FC = () => {
   const todosApi = useContext(TodosApiContext);
 
   const addTodo = async (e: KeyboardEvent<HTMLInputElement>) => {
-    console.log(todosApi);
     if (e.key === "Enter") {
       try {
         await todosApi.addTodo(newTodo);
@@ -63,7 +62,7 @@ const TodoList: FC = () => {
         const { data } = await todosApi.getTodos();
         setTodos(data);
       } catch (error) {
-        console.log(error);
+        errorToaster("Something went wrong");
       }
     };
     fetchTodos();

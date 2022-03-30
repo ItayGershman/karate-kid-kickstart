@@ -27,6 +27,10 @@ export const getElementByHookName = (
   return container.getByTestId(hook);
 };
 
+export const getAllByHookName = (wrapper: RenderResult, hook: DataHook) => {
+  return wrapper.getAllByTestId(hook);
+};
+
 export const handleKeyPress = (elem: HTMLElement | HTMLInputElement) => {
   fireEvent.keyPress(elem, {
     key: "Enter",
