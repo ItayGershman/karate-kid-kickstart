@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { todosApi, TodosApiContext } from "./src/API/Contexts/TodoContext";
+import { todosApi, TodosApiContext } from "./src/Contexts/TodoContext";
 import Header from "./src/components/Header/Header";
 import Toaster from "./src/components/Toaster/Toaster";
 import TodoList from "./src/components/TodoList/TodoList";

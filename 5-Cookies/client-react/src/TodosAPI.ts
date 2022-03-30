@@ -1,6 +1,6 @@
 import axios from "axios";
-import { TodoTypes } from "../../../common/index";
-import { Item, ITodoApi } from "../interfaces/interfaces";
+import { TodoTypes } from "../../common/index";
+import { Item, ITodoApi } from "./interfaces/interfaces";
 
 export class TodosAPI implements ITodoApi {
   getTodos() {

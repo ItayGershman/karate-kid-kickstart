@@ -13,7 +13,7 @@ import "../../../style.css";
 import { errorToaster, successToaster } from "../Toaster/toasterHandler";
 import { TodoTypes } from "../../../../common/index";
 import dataHooks from "../../dataHooks/dataHooks";
-import { TodosApiContext } from "../../API/Contexts/TodoContext";
+import { TodosApiContext } from "../../Contexts/TodoContext";
 
 const TodoList: FC = () => {
   const [todos, setTodos] = useState<Item[]>([]);
