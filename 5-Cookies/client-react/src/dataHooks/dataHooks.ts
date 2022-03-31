@@ -5,5 +5,6 @@ export default {
   editTodoItem: "edit-todo-item",
   todoItem: "todo-item",
   todoText:"todo-text",
-  addItem:"add-item"
+  addItem:"add-item",
+  todoItemIdx: (i:number) => `todo-item-${i}`
 };

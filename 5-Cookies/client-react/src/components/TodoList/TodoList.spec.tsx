@@ -37,6 +37,18 @@ describe("todo list item component", () => {
     });
   });
 
-  test.todo("should remove todo");
+  test("should remove todo", async () => {
+    const todos = [buildTodoItem(), buildTodoItem()];
+    driver.given.InitialTodos(todos);
+
+    driver.when.render();
+    await waitFor(() => {
+      driver.when.removeTodo(todos[0].id);
+    });
+
+    await waitFor(() => {
+      expect(driver.get.isTodosExist()).toEqual(false);
+    });
+  });
   test.todo("should edit todo");
 });

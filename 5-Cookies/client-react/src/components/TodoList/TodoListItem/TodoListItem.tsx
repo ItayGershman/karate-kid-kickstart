@@ -10,7 +10,11 @@ import { errorToaster } from "../../Toaster/toasterHandler";
 import "../../../../style.css";
 import { classes } from "../../../js-styles/style";
 
-const TodoListItem: FC<ITodoItem> = ({ item, removeTodo,dispatchEditTodo }) => {
+const TodoListItem: FC<ITodoItem> = ({
+  item,
+  removeTodo,
+  dispatchEditTodo,
+}) => {
   const [isEditMode, setIsEditMode] = useState<boolean>(false);
   const [todoItem, setTodoItem] = useState<Item>(item);
 
@@ -41,7 +45,7 @@ const TodoListItem: FC<ITodoItem> = ({ item, removeTodo,dispatchEditTodo }) => {
   };
 
   return (
-    <li id={item.id} data-hook={dataHooks.todoItem}>
+    <li id={item.id} data-hook={item.id}>
       <Switch
         cb={toggleTodo}
         checked={todoItem.isFinished}

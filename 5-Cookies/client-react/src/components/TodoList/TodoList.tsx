@@ -4,44 +4,44 @@ import React, {
   useContext,
   FC,
   useEffect,
-} from "react";
-import { Item } from "../../interfaces/interfaces";
-import TodoListItem from "./TodoListItem/TodoListItem";
-import { initTodo } from "../../utils/utils";
-import AddItem from "./AddItem/AddItem";
-import "../../../style.css";
-import { errorToaster, successToaster } from "../Toaster/toasterHandler";
-import { TodoTypes } from "../../../../common/index";
-import dataHooks from "../../dataHooks/dataHooks";
-import { TodosApiContext } from "../../Contexts/TodoContext";
+} from "react"
+import { Item } from "../../interfaces/interfaces"
+import TodoListItem from "./TodoListItem/TodoListItem"
+import { initTodo } from "../../utils/utils"
+import AddItem from "./AddItem/AddItem"
+import "../../../style.css"
+import { errorToaster, successToaster } from "../Toaster/toasterHandler"
+import { TodoTypes } from "../../../../common/index"
+import dataHooks from "../../dataHooks/dataHooks"
+import { TodosApiContext } from "../../Contexts/TodoContext"
 
 const TodoList: FC = () => {
-  const [todos, setTodos] = useState<Item[]>([]);
-  const [newTodo, setNewTodo] = useState<Item>(initTodo());
-  const todosApi = useContext(TodosApiContext);
+  const [todos, setTodos] = useState<Item[]>([])
+  const [newTodo, setNewTodo] = useState<Item>(initTodo())
+  const todosApi = useContext(TodosApiContext)
 
   const addTodo = async (e: KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       try {
-        await todosApi.addTodo(newTodo);
-        setTodos((prevState) => [...prevState, newTodo]);
-        successToaster("New Todo added to your list 🥳");
+        await todosApi.addTodo(newTodo)
+        setTodos((prevState) => [...prevState, newTodo])
+        successToaster("New Todo added to your list 🥳")
       } catch (error) {
-        errorToaster("Something went wrong");
+        errorToaster("Something went wrong")
       }
-      setNewTodo(initTodo);
+      setNewTodo(initTodo)
     }
-  };
+  }
 
   const removeTodo = async (itemID: string) => {
-    setTodos((prevState) => prevState.filter((todo) => todo.id !== itemID));
+    setTodos((prevState) => prevState.filter((todo) => todo.id !== itemID))
     try {
-      await todosApi.removeTodo(itemID);
-      successToaster("Item removed successfuly");
+      await todosApi.removeTodo(itemID)
+      successToaster("Item removed successfuly")
     } catch (error) {
-      errorToaster("Item couldn'e be removed");
+      errorToaster("Item couldn'e be removed")
     }
-  };
+  }
 
   const dispatchEditTodo = async (
     newTodo: Item,
@@ -49,24 +49,24 @@ const TodoList: FC = () => {
     displayToaster: boolean = false
   ): Promise<void> => {
     try {
-      await todosApi.editTodo(newTodo, id);
-      if (displayToaster) successToaster("Item updated");
+      await todosApi.editTodo(newTodo, id)
+      if (displayToaster) successToaster("Item updated")
     } catch (error) {
-      errorToaster("Something went wrong");
+      errorToaster("Something went wrong")
     }
-  };
+  }
 
   useEffect(() => {
     const fetchTodos = async () => {
       try {
-        const { data } = await todosApi.getTodos();
-        setTodos(data);
+        const { data } = await todosApi.getTodos()
+        setTodos(data)
       } catch (error) {
-        errorToaster("Something went wrong");
+        errorToaster("Something went wrong")
       }
-    };
-    fetchTodos();
-  }, []);
+    }
+    fetchTodos()
+  }, [])
 
   return (
     <main>
@@ -78,7 +78,7 @@ const TodoList: FC = () => {
             dataHook={dataHooks.addItem}
           />
           <ul id="todoList" className="list-container">
-            {todos.map((item) => (
+            {todos.map((item, i) => (
               <div key={item.id}>
                 <TodoListItem
                   item={item}
@@ -91,7 +91,7 @@ const TodoList: FC = () => {
         </div>
       </div>
     </main>
-  );
-};
+  )
+}
 
-export default TodoList;
+export default TodoList
